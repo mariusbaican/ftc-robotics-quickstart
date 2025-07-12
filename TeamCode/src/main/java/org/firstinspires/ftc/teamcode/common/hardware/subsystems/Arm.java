@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Arm implements Subsystem
 {
     RobotHardware robot = RobotHardware.getInstance();
-    private final double init_arm = 0.54, spec_arm = 0.26, intake_idle = 0.57, intake = 0.48, spec_in = 0.87;
+    private final double init_arm = 0.54, spec_arm = 0.26, intake_idle = 0.55, intake = 0.46, spec_in = 0.87;
     private double arm_pos = init_arm;
 
     public boolean go_up()

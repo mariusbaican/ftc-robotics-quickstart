@@ -36,7 +36,7 @@ public class   Claw implements Subsystem {
 
     public boolean wrist_intake()
     {
-        wrist_angle = 0.76;//TODO set constant angle
+        wrist_angle = 0.74;//TODO set constant angle
         return true;
     }
 

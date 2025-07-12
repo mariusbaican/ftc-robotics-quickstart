@@ -29,6 +29,10 @@ public class Pivot implements Subsystem{
             isdown = false;
         if(targetangle != 90)
             isup = false;
+        if(angle > 90 && targetangle == 90)
+            angle = 90;
+        if(angle < 0 && targetangle == 0)
+            angle = 0;
         //extension = robot.slides.getExtensionCm() + init_extension;
     }
 
@@ -49,7 +53,7 @@ public class Pivot implements Subsystem{
             robot.pivotEnc.reset();
 
 
-        if(robot.pivoting.isOverCurrent())
+        if(robot.pivoting.isOverCurrent() || getPivotAngle() < 5)
         {
             if(targetangle == 0 && getPivotAngle() < 10)
             {
@@ -58,7 +62,8 @@ public class Pivot implements Subsystem{
                 offset = 0;
                 if(Math.abs(robot.slides.getExtensionCm()) < 10)
                 {
-                    robot.sliderEnc1.reset();
+                    if(robot.slides.targetpos == 0)
+                        robot.sliderEnc1.reset();
                 }
                 robot.pivotEnc.reset();
 
@@ -68,7 +73,8 @@ public class Pivot implements Subsystem{
                 if(Math.abs(robot.slides.getExtensionCm()) < 10 && getPivotAngle() > 80)
                 {
                     power = 0;
-                    robot.sliderEnc1.reset();
+                    if(robot.slides.targetpos == 0)
+                        robot.sliderEnc1.reset();
                     isup = true;
                 }
             }
@@ -90,6 +96,10 @@ public class Pivot implements Subsystem{
 
     public double getPivotAngle()
     {
+        if((robot.pivotEnc.getCurrentPosition() * 90) / 2875.0 + offset < 0)
+            return 0;
+        if((robot.pivotEnc.getCurrentPosition() * 90) / 2875.0 + offset > 90)
+            return 90;
         return (robot.pivotEnc.getCurrentPosition() * 90) / 2875.0 + offset;
     }
 

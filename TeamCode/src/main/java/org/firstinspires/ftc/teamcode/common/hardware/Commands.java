@@ -57,7 +57,7 @@ public class Commands {
     public SequentialCommand go_basket2()
     {
         return new SequentialCommand(new ConditionalCommand(() -> {
-            return robot.slides.setTargetExtension(65);
+            return robot.slides.setTargetExtension(70);
         }), new TimedCommand(() -> {
             return robot.claw.wrist_basket();
         }, 0));

@@ -17,7 +17,7 @@ public class Slides implements Subsystem{
     RobotHardware robot = RobotHardware.getInstance();
     public static double Po = 0, Do = 0, Fo = 0, So = 0;
     public static double Pv = 0.09, Dv = 0.0135, Fv = 0.06, Sv = 0;
-    boolean isretracted = false;
+    boolean isretracted = true;
     public double angle = 0, targetpos = 0, currpos = 0, power = 0;
     PDFSController PDFS = new PDFSController(Pv,Dv,Fv,Sv).setFeedForwardType(PDFSController.FeedForwardType.CONSTANT).setDeadzone(3).sethomedConstant(-0.1);
 
@@ -37,7 +37,7 @@ public class Slides implements Subsystem{
         power = PDFS.run(currpos, targetpos, angle);
         if(targetpos == 0 && !isretracted)
             power = -1;
-        if((robot.sliderl.isOverCurrent() || robot.sliderr.isOverCurrent()))
+        if(robot.sliderr.isOverCurrent() && !isretracted)
         {
             if(targetpos == 0 && getExtensionCm() < 10) {
                 power = 0;
