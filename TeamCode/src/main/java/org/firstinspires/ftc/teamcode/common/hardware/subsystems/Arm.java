@@ -24,11 +24,14 @@ public class Arm implements Subsystem
         return true;
     }
 
-    public boolean spec_score()
+    public boolean score_spec_arm()
     {
-        arm_pos = spec_arm;
+        arm_pos = 0.65;
         return true;
     }
+    public boolean spec_intake_arm() {
+        arm_pos = 0.1;
+        return true; }
 
     public boolean spec_intake()
     {

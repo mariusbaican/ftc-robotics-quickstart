@@ -125,6 +125,21 @@ public class   Claw implements Subsystem {
         return true;
     }
 
+    public boolean score_spec_wrist()
+    {
+        wrist_angle = 0.6;
+        return true;
+    }
+
+    public boolean score_spec_rotate()
+    {
+        set_angle_pos = 0.2;
+        return true;
+    }
+ public boolean spec_intake_wrist() {
+        wrist_angle = 0.3;
+        return true; }
+
 
     @Override
     public void read() {

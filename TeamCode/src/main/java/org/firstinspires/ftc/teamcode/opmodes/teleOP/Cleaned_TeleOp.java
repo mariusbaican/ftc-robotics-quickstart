@@ -90,10 +90,7 @@ public class  Cleaned_TeleOp extends LinearOpMode {
 
             if(gamepad1.left_bumper && lastlbumper.milliseconds() > 200 && state != 8)
             {
-                if(state == 4 || state == 5)
-                    scheduler.schedule(new SequentialCommand(actions.score_spec(), actions.idle()));
-                else
-                    scheduler.schedule(actions.idle());
+                scheduler.schedule(actions.idle());
                 state = 8;
                 lastlbumper.reset();
                 open = false;
@@ -102,10 +99,7 @@ public class  Cleaned_TeleOp extends LinearOpMode {
             if(gamepad1.triangle && lasttriangle.milliseconds() > 200 && state != 2)
             {
                 scheduler.reset();
-                if(state == 4 || state == 5)
-                    scheduler.schedule(new SequentialCommand(actions.score_spec(), actions.idle(), actions.go_basket2()));
-                else
-                    scheduler.schedule(new SequentialCommand(actions.idle(), actions.go_basket2()));
+                scheduler.schedule(new SequentialCommand(actions.idle(), actions.go_basket2()));
                 lasttriangle.reset();
                 open = false;
                 state = 2;
@@ -114,19 +108,15 @@ public class  Cleaned_TeleOp extends LinearOpMode {
 
             if(gamepad1.circle && lastcircle.milliseconds() > 200 && state != 5)
             {
-                scheduler.schedule(new SequentialCommand(actions.idle(), actions.go_spec2()));
+                scheduler.schedule(new SequentialCommand(actions.idle(), actions.spec_score()));
                 lastcircle.reset();
-                open = false;
                 state = 5;
             }
 
             if(gamepad1.right_bumper && lastbumper.milliseconds() > 200 && state != 6)
             {
                 scheduler.reset();
-                if(state == 4 || state == 5)
-                    scheduler.schedule(new SequentialCommand(actions.score_spec(), actions.idle(),  actions.intake_idle()));
-                else
-                    scheduler.schedule(new SequentialCommand(actions.idle(),  actions.intake_idle()));
+                scheduler.schedule(new SequentialCommand(actions.idle(),  actions.intake_idle()));
                 open = true;
                 lastbumper.reset();
                 state = 6;
@@ -134,10 +124,8 @@ public class  Cleaned_TeleOp extends LinearOpMode {
 
             if(gamepad1.square && lastsquare.milliseconds() > 200 && state != 7)
             {
-                if(state == 4 || state == 5)
-                    scheduler.schedule(new SequentialCommand(actions.score_spec(), actions.idle(),  actions.spec_intake()));
-                else
-                    scheduler.schedule(new SequentialCommand(actions.idle(),  actions.spec_intake()));
+
+                scheduler.schedule(new SequentialCommand(actions.idle(),  actions.spec_intake()));
                 lastsquare.reset();
                 open = false;
                 state = 7;

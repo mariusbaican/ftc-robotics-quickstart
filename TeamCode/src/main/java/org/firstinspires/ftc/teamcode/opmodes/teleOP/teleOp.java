@@ -41,7 +41,9 @@ public class  teleOp extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive() && !isStopRequested()){
-            telemetry.addData("pozitie servo rotit ", robot.set_angle.getPosition());
+            telemetry.addData("pozitie servo rotit ", robot.set_angle.getPosition());//0.8
+            telemetry.addData("tung tung sahur bat ", robot.set_arm.getPosition());//0.1
+            telemetry.addData("Cimpanzini bannanini",robot.wrist.getPosition());//0.3
             if(gamepad1.right_bumper && lastbumper.milliseconds() > 500)
             {
                 lastbumper.reset();
@@ -52,6 +54,34 @@ public class  teleOp extends LinearOpMode {
             {
                 lastbumper.reset();
                 robot.set_angle.setPosition(robot.set_angle.getPosition() - 0.05);
+            }
+            if(gamepad1.left_trigger > 0 && lasttrigger.milliseconds() > 500)
+            {
+                lasttrigger.reset();
+                robot.set_arm.setPosition(robot.set_arm.getPosition() + 0.05);
+            }
+            if(gamepad1.right_trigger  > 0 && lasttrigger.milliseconds() > 500)
+            {
+                lasttrigger.reset();
+                robot.set_arm.setPosition(robot.set_arm.getPosition() - 0.05);
+            }
+            if(gamepad1.cross && lastcross.milliseconds() > 500)
+            {
+                lastcross.reset();
+                robot.state.setPosition(robot.state.getPosition() + 0.05);
+            }
+            if(gamepad1.circle && lastcircle.milliseconds() > 500)
+            {
+                lastcircle.reset();
+                robot.state.setPosition(robot.state.getPosition() - 0.05);
+            }
+            if(gamepad1.triangle && lasttriangle.milliseconds()>500){
+                lasttriangle.reset();
+                robot.wrist.setPosition(robot.wrist.getPosition()- 0.05);
+            }
+            if(gamepad1.square && lastsquare.milliseconds()>500){
+                lastsquare.reset();
+                robot.wrist.setPosition(robot.wrist.getPosition()+ 0.05);
             }
 
             robot.clearCache();
