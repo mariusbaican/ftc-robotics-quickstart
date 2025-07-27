@@ -108,6 +108,13 @@ public class Commands {
         }));
     }
 
+    public SequentialCommand hang()
+    {
+        return new SequentialCommand(new ConditionalCommand(() -> {
+            return robot.pivot.setTargetangle(0);
+        }), new TimedCommand(() -> {return robot.pto.hang();}, 0.2));
+    }
+
     public SequentialCommand arm_idle()
     {
         return new SequentialCommand(new TimedCommand(() -> {

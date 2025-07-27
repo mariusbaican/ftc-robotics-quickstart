@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class  Cleaned_TeleOp extends LinearOpMode {
-
     @Override
     public void runOpMode()
     {
@@ -129,6 +128,12 @@ public class  Cleaned_TeleOp extends LinearOpMode {
                 lastsquare.reset();
                 open = false;
                 state = 7;
+            }
+
+            if(gamepad2.triangle && !robot.agatat)
+            {
+                robot.agatat = true;
+                scheduler.schedule(new SequentialCommand(actions.idle(), actions.hang()));
             }
 
             scheduler.run();

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.controltheory.PDFSController;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.opmodes.teleOP.Cleaned_TeleOp;
 
 @Config
 public class FieldCentricDrive implements Subsystem {
@@ -90,10 +91,28 @@ public class FieldCentricDrive implements Subsystem {
         double rearRightPower = (-y + x + turn) * voltageCorrection / denominator;
         double frontRightPower = (y + x + turn) * voltageCorrection / denominator;
 
-        robot.frontLeft.setPower(frontLeftPower * brake);
-        robot.rearLeft.setPower(rearLeftPower * brake);
-        robot.rearRight.setPower(rearRightPower * brake);
-        robot.frontRight.setPower(frontRightPower * brake);
+        if(!robot.agatat) {
+            robot.frontLeft.setPower(frontLeftPower * brake);
+            robot.rearLeft.setPower(rearLeftPower * brake);
+            robot.rearRight.setPower(rearRightPower * brake);
+            robot.frontRight.setPower(frontRightPower * brake);
+        }
+        else if(robot.agatat)
+        {
+            if(robot.gamepad2.cross)
+            {
+                robot.frontLeft.setPower(0.7);
+                robot.frontRight.setPower(0.7);
+                robot.rearLeft.setPower(0);
+                robot.rearRight.setPower(0);
+            }
+            else {
+                robot.frontLeft.setPower(0.3);
+                robot.frontRight.setPower(0.3);
+                robot.rearLeft.setPower(0);
+                robot.rearRight.setPower(0);
+            }
+        }
     }
 
     @Override

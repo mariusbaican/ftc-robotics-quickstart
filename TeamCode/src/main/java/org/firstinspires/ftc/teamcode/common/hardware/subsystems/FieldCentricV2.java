@@ -67,10 +67,29 @@ public class FieldCentricV2 implements Subsystem {
         double frontRightPower = (rotY - rotX - turn) * voltageCorrection/ denominator;
         double backRightPower = (rotY + rotX - turn) * voltageCorrection/ denominator;
 
-        robot.frontLeft.setPower(frontLeftPower * brake);
-        robot.rearLeft.setPower(backLeftPower * brake);
-        robot.frontRight.setPower(frontRightPower * brake);
-        robot.rearRight.setPower(backRightPower * brake);
+        if(!robot.agatat) {
+            robot.frontLeft.setPower(frontLeftPower * brake);
+            robot.rearLeft.setPower(backLeftPower * brake);
+            robot.rearRight.setPower(backRightPower * brake);
+            robot.frontRight.setPower(frontRightPower * brake);
+        }
+        else if(robot.agatat)
+        {
+            if(robot.gamepad2.cross)
+            {
+                robot.ridicat = true;
+                robot.frontLeft.setPower(0.7);
+                robot.frontRight.setPower(0.7);
+                robot.rearLeft.setPower(0);
+                robot.rearRight.setPower(0);
+            }
+            else if(robot.ridicat){
+                robot.frontLeft.setPower(0.3);
+                robot.frontRight.setPower(0.3);
+                robot.rearLeft.setPower(0);
+                robot.rearRight.setPower(0);
+            }
+        }
     }
     @Override
     public void periodic() {

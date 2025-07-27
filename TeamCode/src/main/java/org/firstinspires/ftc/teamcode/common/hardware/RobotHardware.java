@@ -66,6 +66,8 @@ public class RobotHardware
 	public BetterServo wrist = new BetterServo("wrist");
 	public BetterServo set_arm = new BetterServo("set_arm");
 	public BetterServo servo_pto = new BetterServo("pto");
+	public BetterServo hang1 = new BetterServo("hang1");
+	public BetterServo hang2 = new BetterServo("hang2");
 
 
 
@@ -79,6 +81,8 @@ public class RobotHardware
 	public FieldCentricV2 drivetrain;
 	public Supplier<Double> voltageSupplier;
 	public GoBildaPinpointDriver pinpoint;
+	public boolean agatat = false;
+	public boolean ridicat = false;
 
 	ArrayList<Subsystem> subsystems = new ArrayList<>();
 
@@ -121,6 +125,7 @@ public class RobotHardware
 		subsystems.add(arm);
 		subsystems.add(drivetrain);
 		subsystems.add(slides);
+		subsystems.add(pto);
 		frontLeft.init(hwMap);
 		rearLeft.init(hwMap);
 		rearRight.init(hwMap);
