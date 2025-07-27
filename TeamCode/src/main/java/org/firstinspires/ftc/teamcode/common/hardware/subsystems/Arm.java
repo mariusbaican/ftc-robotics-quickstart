@@ -29,9 +29,12 @@ public class Arm implements Subsystem
         arm_pos = 0.65;
         return true;
     }
-    public boolean spec_intake_arm() {
+
+    public boolean spec_intake_arm()
+    {
         arm_pos = 0.1;
-        return true; }
+        return true;
+    }
 
     public boolean spec_intake()
     {
