@@ -7,8 +7,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class LConstants {
     static {
-        PinpointConstants.forwardY = 10;
-        PinpointConstants.strafeX = -2;
+        PinpointConstants.forwardY = 2;
+        PinpointConstants.strafeX = 12;
         PinpointConstants.distanceUnit = DistanceUnit.CM;
         PinpointConstants.hardwareMapName = "pinpoint";
         PinpointConstants.useYawScalar = false;

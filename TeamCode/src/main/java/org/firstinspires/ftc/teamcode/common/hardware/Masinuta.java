@@ -60,8 +60,6 @@ public class Masinuta
     {
         //camera = new Camera();
 
-
-
         controlHub = hwMap.get(LynxModule.class, "Control Hub");
 
         controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
