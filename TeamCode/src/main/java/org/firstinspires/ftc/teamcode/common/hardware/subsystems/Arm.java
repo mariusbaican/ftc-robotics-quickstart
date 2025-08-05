@@ -32,7 +32,7 @@ public class Arm implements Subsystem
 
     public boolean spec_intake_arm()
     {
-        arm_pos = 0.1;
+        arm_pos = 0.12;
         return true;
     }
 

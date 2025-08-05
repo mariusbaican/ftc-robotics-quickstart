@@ -26,7 +26,12 @@ import  org.firstinspires.ftc.teamcode.common.hardware.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.common.hardware.subsystems.Pto;
 import  org.firstinspires.ftc.teamcode.common.hardware.subsystems.Slides;
 import  org.firstinspires.ftc.teamcode.common.hardware.subsystems.Subsystem;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 
+import com.revrobotics.ColorSensorV3;
 
 import java.util.ArrayList;
 
@@ -41,6 +46,9 @@ public class RobotHardware
 	// Declare Devices
 	LynxModule controlHub;
 	LynxModule expansionHub;
+
+
+
 
 	public Gamepad gamepad1;
 	public Gamepad lastGamepad1;
@@ -98,6 +106,7 @@ public class RobotHardware
 		pto = new Pto();
 		pivot = new Pivot();
 		slides = new Slides();
+
 		//camera = new Camera();
 
 

@@ -107,6 +107,18 @@ public class Commands {
             return robot.slides.setTargetExtension(20);
         }));
     }
+    public SequentialCommand spec_score_auto()
+    {
+        return new SequentialCommand(new TimedCommand(() -> { return
+                robot.arm.score_spec_arm();
+        }, 0.3), new TimedCommand(() -> { return
+                robot.claw.score_spec_rotate();
+        }, 0.3), new TimedCommand(() -> { return
+                robot.claw.score_spec_wrist();
+        }, 0.3), new ConditionalCommand(() -> {
+            return robot.slides.setTargetExtension(18.5);
+        }));
+    }
 
     public SequentialCommand hang()
     {

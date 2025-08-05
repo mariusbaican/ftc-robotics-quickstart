@@ -38,7 +38,7 @@ public class Pto implements Subsystem {
     public void init(HardwareMap hwMap) {
         robot.servo_pto.init(hwMap);
         robot.servo_pto.setPosition(0.4);
-        robot.servo_pto.setPosition(0.5);
+        robot.servo_pto.setPosition(state);
         robot.hang1.init(hwMap);
         robot.hang1.setPosition(0.4);
         robot.hang1.setPosition(0.5);
