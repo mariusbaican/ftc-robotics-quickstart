@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleOP;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.commandbase.CommandScheduler;
 import org.firstinspires.ftc.teamcode.common.commandbase.ConditionalCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.InstantCommand;
@@ -31,6 +33,7 @@ public class  Cleaned_TeleOp extends LinearOpMode {
 
 
         boolean open = false, specstate = false, isintakeidle = false, right = false;
+        boolean isCareful = false;
         int state = 0;
 
         robot.init(hardwareMap).setGamepads(gamepad1, gamepad2);
@@ -46,8 +49,10 @@ public class  Cleaned_TeleOp extends LinearOpMode {
             telemetry.addData("targetangle ", robot.pivot.targetangle);
             telemetry.addData("ext ", robot.slides.getExtensionCm());
             telemetry.addData("targetext ", robot.slides.targetpos);
+            telemetry.addData("forntie", robot.sensor.getDistance(DistanceUnit.CM));
             telemetry.update();
-
+            if(gamepad2.dpad_up)
+                isCareful = true;
 
             if(gamepad1.cross && lastcross.milliseconds() > 200 && (state == 6 || state == 1))
             {
@@ -80,11 +85,18 @@ public class  Cleaned_TeleOp extends LinearOpMode {
             {
                 if(open)
                     robot.claw.close();
-                else
+                else{
+
                     robot.claw.open();
+                    if(robot.slides.getExtensionCm()>=60 && !isCareful) {
+                        robot.claw.go_down();
+                    }
+                }
+
                 open = !open;
                 lastcross2.reset();
             }
+
 
 
             if(gamepad1.left_bumper && lastlbumper.milliseconds() > 200 && state != 8)

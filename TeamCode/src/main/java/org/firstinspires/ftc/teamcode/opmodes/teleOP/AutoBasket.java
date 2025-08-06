@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleOP;
 
+import static android.os.SystemClock.sleep;
 import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -19,6 +20,7 @@ import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.commandbase.CommandScheduler;
 import org.firstinspires.ftc.teamcode.common.commandbase.SequentialCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.TimedCommand;
@@ -48,11 +50,11 @@ public class AutoBasket extends OpMode {
     ElapsedTime lastclosed = new ElapsedTime();
     private PathChain circle;
     public  PathChain line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11, line12, line13, line14, line15,line16;
-    private double xPath = 10;
+    private double xPath = 10, dist = 16;
     private  double yPath = 125;
     private double val = 0.1;
     private int pathState = 0;
-    private boolean scored1 = false, scored2 = false, scored3 = false, scored4 = false, scored5 = false, took2 = false, took3 = false, took4 = false, took5 = false;
+    private boolean scored1 = false, scored2 = false, scored3 = false, scored4 = false, scored5 = false, took2 = false, took3 = false, took4 = false, took5 = false, closed = false, adjusted = false;
     RobotHardware robot;
     Commands actions;
     CommandScheduler scheduler;
@@ -142,7 +144,7 @@ public class AutoBasket extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Point(30, 5, Point.CARTESIAN),
-                                new Point(10, 33.438, Point.CARTESIAN)
+                                new Point(10, 30, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -152,7 +154,7 @@ public class AutoBasket extends OpMode {
         line8 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(10, 33.438, Point.CARTESIAN),
+                                new Point(10, 30, Point.CARTESIAN),
                                 new Point(17.97899649941657, 67.8833138856476, Point.CARTESIAN),
                                 new Point(42, 68, Point.CARTESIAN)
                         )
@@ -244,7 +246,6 @@ public class AutoBasket extends OpMode {
 
     @Override
     public void init() {
-        lastclosed.reset();
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(new Pose(8.905, 65.363, Math.toRadians(180)));
         buildpaths();
@@ -253,7 +254,7 @@ public class AutoBasket extends OpMode {
         actions = new Commands();
         robot.init(hardwareMap).setGamepads(gamepad1, gamepad2);
         scheduler.reset();
-        scheduler.schedule(new SequentialCommand(actions.idle(), actions.spec_score_auto()));
+        scheduler.schedule(new SequentialCommand(actions.idle(), actions.spec_score()));
 
     }
 
@@ -265,7 +266,7 @@ public class AutoBasket extends OpMode {
     public void loop() {
         robot.read();
         follower.update();
-        autonomousPathUpdate();
+        telemetry.update();
 
         if(pathState == 2 && !scored1)
         {
@@ -273,43 +274,40 @@ public class AutoBasket extends OpMode {
                 return robot.claw.open();
             }, 0.2),actions.idle(), actions.spec_intake()));
             scored1 = true;
+            closed = false;
         }
 
-        if(pathState == 10 && !scored2)
+        if(pathState == 9 && !scored2)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
             }, 0.2),actions.idle(), actions.spec_intake()));
             scored2 = true;
+            closed = false;
         }
-        if(pathState == 12 && !scored3)
+        if(pathState == 11 && !scored3)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
             }, 0.2),actions.idle(), actions.spec_intake()));
             scored3 = true;
+            closed = false;
         }
-        if(pathState == 14 && !scored4)
+        if(pathState == 13 && !scored4)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
             }, 0.2),actions.idle(), actions.spec_intake()));
             scored4 = true;
+            closed = false;
         }
-        if(pathState == 16 && !scored5)
+        if(pathState == 15 && !scored5)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
             }, 0.2),actions.idle(), actions.spec_intake()));
             scored5 = true;
-        }
-
-        if(follower.getPose().getX() < 11 && follower.getPose().getY() < 60 && lastclosed.milliseconds() > 2000)
-        {
-            scheduler.schedule(new TimedCommand(() -> {
-                return robot.claw.close();
-            }, 0));
-            lastclosed.reset();
+            closed = false;
         }
 
         if(pathState == 8 && !took2)
@@ -318,24 +316,24 @@ public class AutoBasket extends OpMode {
             took2 = true;
         }
 
-        if(pathState == 11 && !took3)
+        if(pathState == 10 && !took3)
         {
             scheduler.schedule(actions.spec_score());
             took3 = true;
         }
-        if(pathState == 13 && !took4)
+        if(pathState == 12 && !took4)
         {
             scheduler.schedule(actions.spec_score());
             took4 = true;
         }
-        if(pathState == 15 && !took5)
+        if(pathState == 14 && !took5)
         {
             scheduler.schedule(actions.spec_score());
             took5 = true;
         }
 
         if(follower.getPose().getX() < 30 && follower.getPose().getY() < 40) {
-            follower.setMaxPower(0.5);
+            follower.setMaxPower(0.7);
         }
         else {
             follower.setMaxPower(1);
@@ -347,6 +345,8 @@ public class AutoBasket extends OpMode {
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("Follower busy", follower.isBusy());
+        telemetry.addData("ext", robot.slides.getExtensionCm());
+        autonomousPathUpdate();
 
         telemetry.update();
         scheduler.run();
@@ -361,7 +361,7 @@ public class AutoBasket extends OpMode {
     private void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                if(robot.slides.getExtensionCm() >10)
+                if(robot.slides.getExtensionCm() > 20)
                 {
                     follower.followPath(line1, true);
                     setPathState(1);
@@ -388,7 +388,6 @@ public class AutoBasket extends OpMode {
                 break;
             case 4:
                 if(!follower.isBusy()) {
-                    follower.setMaxPower(0.8);
                     follower.followPath(line5, true);
                     setPathState(5);
                 }
@@ -400,64 +399,139 @@ public class AutoBasket extends OpMode {
                 }
                 break;
             case 6:
+                adjusted = false;
                 if(!follower.isBusy()) {
                     follower.followPath(line7, true);
                     setPathState(7);
                 }
                break;
             case 7:
-                if(!follower.isBusy()) {
+                if(lastclosed.milliseconds() > 600 && lastclosed.milliseconds() < 2000) {
                     follower.setMaxPower(1);
                     follower.followPath(line8, true);
                     setPathState(8);
                 }
+                else if(!follower.isBusy() && lastclosed.milliseconds() > 2000) {
+                    follower.followPath(follower.pathBuilder()
+                            .addPath(
+                                    new BezierLine(
+                                            new Point(follower.getPose().getX(), follower.getPose().getY(), Point.CARTESIAN),
+                                            new Point(follower.getPose().getX() - 2, follower.getPose().getY(), Point.CARTESIAN)
+                                    )
+                            )
+                            .setConstantHeadingInterpolation(Math.toRadians(180))
+                            .setPathEndTimeoutConstraint(400)
+                            .build(), true);
+                    adjusted = true;
+                    scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
+                        return robot.claw.open();
+                    }, 0.2),new TimedCommand(() -> {
+                        return robot.claw.close();
+                    }, 0)));
+                    lastclosed.reset();
+                }
                 break;
             case 8:
+                adjusted = false;
                 if(!follower.isBusy()) {
-                    follower.followPath(line8, true);
+                    follower.followPath(line9, true);
                     setPathState(9);
                 }
                 break;
             case 9:
-                if(!follower.isBusy()) {
-                    follower.followPath(line9, true);
+                if(lastclosed.milliseconds() > 600 && lastclosed.milliseconds() < 2000) {
+                    follower.followPath(line10, true);
                     setPathState(10);
+                }
+                else if(!follower.isBusy() && lastclosed.milliseconds() > 2000) {
+                    follower.followPath(follower.pathBuilder()
+                            .addPath(
+                                    new BezierLine(
+                                            new Point(follower.getPose().getX(), follower.getPose().getY(), Point.CARTESIAN),
+                                            new Point(follower.getPose().getX() - 2, follower.getPose().getY(), Point.CARTESIAN)
+                                    )
+                            )
+                            .setConstantHeadingInterpolation(Math.toRadians(180))
+                            .setPathEndTimeoutConstraint(400)
+                            .build(), true);
+                    adjusted = true;
+                    scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
+                        return robot.claw.open();
+                    }, 0.2),new TimedCommand(() -> {
+                        return robot.claw.close();
+                    }, 0)));
+                    lastclosed.reset();
                 }
                 break;
             case 10:
+                adjusted = false;
                 if(!follower.isBusy()) {
-                    follower.followPath(line10, true);
+                    follower.followPath(line11, true);
                     setPathState(11);
                 }
                 break;
             case 11:
-                if(!follower.isBusy()) {
-                    follower.followPath(line11, true);
+                if(lastclosed.milliseconds() > 600 && lastclosed.milliseconds() < 2000) {
+                    follower.followPath(line12, true);
                     setPathState(12);
+                }
+                else if(!follower.isBusy() && lastclosed.milliseconds() > 2000) {
+                    follower.followPath(follower.pathBuilder()
+                            .addPath(
+                                    new BezierLine(
+                                            new Point(follower.getPose().getX(), follower.getPose().getY(), Point.CARTESIAN),
+                                            new Point(follower.getPose().getX() - 2, follower.getPose().getY(), Point.CARTESIAN)
+                                    )
+                            )
+                            .setConstantHeadingInterpolation(Math.toRadians(180))
+                            .setPathEndTimeoutConstraint(400)
+                            .build(), true);
+                    adjusted = true;
+                    scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
+                        return robot.claw.open();
+                    }, 0.2),new TimedCommand(() -> {
+                        return robot.claw.close();
+                    }, 0)));
+                    lastclosed.reset();
                 }
                 break;
             case 12:
+                adjusted = false;
                 if(!follower.isBusy()) {
-                    follower.followPath(line12, true);
+                    follower.followPath(line13, true);
                     setPathState(13);
                 }
                 break;
             case 13:
-                if(!follower.isBusy()) {
-                    follower.followPath(line13, true);
+                if(lastclosed.milliseconds() > 600 && lastclosed.milliseconds() < 2000) {
+                    follower.followPath(line14, true);
                     setPathState(14);
                 }
+                else if(!follower.isBusy() && lastclosed.milliseconds() > 2000) {
+                    follower.followPath(follower.pathBuilder()
+                            .addPath(
+                                    new BezierLine(
+                                            new Point(follower.getPose().getX(), follower.getPose().getY(), Point.CARTESIAN),
+                                            new Point(follower.getPose().getX() - 2, follower.getPose().getY(), Point.CARTESIAN)
+                                    )
+                            )
+                            .setConstantHeadingInterpolation(Math.toRadians(180))
+                            .setPathEndTimeoutConstraint(400)
+                            .build(), true);
+                }
+                adjusted = true;
+                scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
+                    return robot.claw.open();
+                }, 0.2),new TimedCommand(() -> {
+                    return robot.claw.close();
+                }, 0)));
+                lastclosed.reset();
                 break;
             case 14:
-                if(!follower.isBusy()) {
-                    follower.followPath(line14, true);
-                    setPathState(15);
-                }
-                break;
-            case 15:
+                adjusted = false;
                 if(!follower.isBusy()) {
                     follower.followPath(line15, true);
-                    setPathState(16);
+                    setPathState(15);
                 }
                 break;
         }

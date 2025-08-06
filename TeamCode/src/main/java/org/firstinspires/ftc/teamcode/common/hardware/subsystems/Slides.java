@@ -16,7 +16,7 @@ public class Slides implements Subsystem{
 
     RobotHardware robot = RobotHardware.getInstance();
     public static double Po = 0, Do = 0, Fo = 0, So = 0;
-    public static double Pv = 0.09, Dv = 0.0135, Fv = 0.06, Sv = 0;
+    public static double Pv = 0.098, Dv = 0.012, Fv = 0.072, Sv = 0;
     boolean isretracted = true;
     public double angle = 0, targetpos = 0, currpos = 0, power = 0;
     PDFSController PDFS = new PDFSController(Pv,Dv,Fv,Sv).setFeedForwardType(PDFSController.FeedForwardType.CONSTANT).setDeadzone(3).sethomedConstant(-0.1);

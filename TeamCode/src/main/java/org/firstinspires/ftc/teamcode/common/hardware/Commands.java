@@ -104,7 +104,7 @@ public class Commands {
         }, 0.3), new TimedCommand(() -> { return
                 robot.claw.score_spec_wrist();
         }, 0.3), new ConditionalCommand(() -> {
-            return robot.slides.setTargetExtension(20);
+            return robot.slides.setTargetExtension(26);
         }));
     }
     public SequentialCommand spec_score_auto()

@@ -42,7 +42,7 @@ public class   Claw implements Subsystem {
 
     public boolean wrist_intake_idle()
     {
-        wrist_angle = 0.84;//TODO set constant angle
+        wrist_angle = 0.80;//TODO set constant angle
         return true;
     }
 
@@ -80,7 +80,7 @@ public class   Claw implements Subsystem {
 
     public  boolean go_down()
     {
-        wrist_angle = wrist_angle - 0.04;
+        wrist_angle = wrist_angle - 0.07;
         return  true;
     }
 
@@ -127,7 +127,7 @@ public class   Claw implements Subsystem {
 
     public boolean score_spec_wrist()
     {
-        wrist_angle = 0.6;
+        wrist_angle = 0.65;
         return true;
     }
 

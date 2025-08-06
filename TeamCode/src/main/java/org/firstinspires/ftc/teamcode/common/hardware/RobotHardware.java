@@ -2,13 +2,17 @@ package org.firstinspires.ftc.teamcode.common.hardware;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
+
 import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,12 +30,6 @@ import  org.firstinspires.ftc.teamcode.common.hardware.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.common.hardware.subsystems.Pto;
 import  org.firstinspires.ftc.teamcode.common.hardware.subsystems.Slides;
 import  org.firstinspires.ftc.teamcode.common.hardware.subsystems.Subsystem;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
-
-import com.revrobotics.ColorSensorV3;
 
 import java.util.ArrayList;
 
@@ -46,6 +44,8 @@ public class RobotHardware
 	// Declare Devices
 	LynxModule controlHub;
 	LynxModule expansionHub;
+
+
 
 
 
@@ -76,6 +76,7 @@ public class RobotHardware
 	public BetterServo servo_pto = new BetterServo("pto");
 	public BetterServo hang1 = new BetterServo("hang1");
 	public BetterServo hang2 = new BetterServo("hang2");
+	public RevColorSensorV3 sensor;
 
 
 
@@ -113,6 +114,7 @@ public class RobotHardware
 
 		controlHub = hwMap.get(LynxModule.class, "Control Hub");
 		expansionHub = hwMap.get(LynxModule.class, "Expansion Hub 3");
+		sensor = hwMap.get(RevColorSensorV3.class, "csensor");
 
 		controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 		expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
