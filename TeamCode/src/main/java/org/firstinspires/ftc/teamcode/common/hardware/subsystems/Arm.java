@@ -30,6 +30,14 @@ public class Arm implements Subsystem
         return true;
     }
 
+    public boolean intake_retract()
+    {
+        arm_pos = intake_idle + 0.05;
+        return true;
+    }
+
+
+
     public boolean spec_intake_arm()
     {
         arm_pos = 0.12;

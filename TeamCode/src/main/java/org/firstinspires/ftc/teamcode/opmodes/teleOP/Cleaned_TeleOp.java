@@ -132,6 +132,14 @@ public class  Cleaned_TeleOp extends LinearOpMode {
                 lastbumper.reset();
                 state = 6;
             }
+            else if(gamepad1.right_bumper && lastbumper.milliseconds() > 400 && state == 6)
+            {
+                scheduler.reset();
+                scheduler.schedule(actions.retract());
+                open = false;
+                lastbumper.reset();
+                state = 6;
+            }
 
             if(gamepad1.square && lastsquare.milliseconds() > 200 && state != 7)
             {

@@ -127,7 +127,7 @@ public class   Claw implements Subsystem {
 
     public boolean score_spec_wrist()
     {
-        wrist_angle = 0.65;
+        wrist_angle = 0.66;
         return true;
     }
 

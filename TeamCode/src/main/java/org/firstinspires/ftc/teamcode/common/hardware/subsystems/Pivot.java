@@ -53,7 +53,7 @@ public class Pivot implements Subsystem{
             robot.pivotEnc.reset();
 
 
-        if(robot.pivoting.isOverCurrent() || getPivotAngle() < 5)
+        if(robot.pivoting.isOverCurrent() || getPivotAngle() < 5 || getPivotAngle() > 80)
         {
             if(targetangle == 0 && getPivotAngle() < 10)
             {

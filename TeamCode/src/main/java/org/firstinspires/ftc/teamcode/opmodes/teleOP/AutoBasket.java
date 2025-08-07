@@ -156,18 +156,19 @@ public class AutoBasket extends OpMode {
                         new BezierCurve(
                                 new Point(10, 30, Point.CARTESIAN),
                                 new Point(17.97899649941657, 67.8833138856476, Point.CARTESIAN),
-                                new Point(42, 68, Point.CARTESIAN)
+                                new Point(38, 75, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setPathEndTimeoutConstraint(200)
                 .build();
 
         line9 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(42, 68, Point.CARTESIAN),
+                                new Point(38, 75, Point.CARTESIAN),
                                 new Point(32.4294049008168, 29.740956826137694, Point.CARTESIAN),
-                                new Point(10, 33.438, Point.CARTESIAN)
+                                new Point(10, 30, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -177,20 +178,21 @@ public class AutoBasket extends OpMode {
         line10 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(10, 33.438, Point.CARTESIAN),
+                                new Point(10, 30, Point.CARTESIAN),
                                 new Point(17.97899649941657, 67.8833138856476, Point.CARTESIAN),
-                                new Point(42, 70, Point.CARTESIAN)
+                                new Point(38, 73, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setPathEndTimeoutConstraint(200)
                 .build();
 
         line11 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(42, 70, Point.CARTESIAN),
+                                new Point(38, 73, Point.CARTESIAN),
                                 new Point(31.925320886814472, 29.740956826137694, Point.CARTESIAN),
-                                new Point(10, 33.438, Point.CARTESIAN)
+                                new Point(10, 30, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -200,34 +202,36 @@ public class AutoBasket extends OpMode {
         line12 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(10, 33.438, Point.CARTESIAN),
+                                new Point(10, 30, Point.CARTESIAN),
                                 new Point(17.97899649941657, 67.8833138856476, Point.CARTESIAN),
-                                new Point(42, 72, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .build();
-
-        line13 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Point(42, 72, Point.CARTESIAN),
-                                new Point(31.925320886814472, 29.57292882147025, Point.CARTESIAN),
-                                new Point(10, 33.774, Point.CARTESIAN)
+                                new Point(38, 71, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .setPathEndTimeoutConstraint(200)
                 .build();
 
-        line14 = follower.pathBuilder()                .addPath(
+        line13 = follower.pathBuilder()
+                .addPath(
                         new BezierCurve(
-                                new Point(10, 33.774, Point.CARTESIAN),
-                                new Point(17.97899649941657, 67.8833138856476, Point.CARTESIAN),
-                                new Point(42, 73, Point.CARTESIAN)
+                                new Point(38, 71, Point.CARTESIAN),
+                                new Point(31.925320886814472, 29.57292882147025, Point.CARTESIAN),
+                                new Point(10, 30, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setPathEndTimeoutConstraint(200)
+                .build();
+
+        line14 = follower.pathBuilder().addPath(
+                new BezierCurve(
+                        new Point(10, 30, Point.CARTESIAN),
+                        new Point(17.97899649941657, 67.8833138856476, Point.CARTESIAN),
+                        new Point(38, 69, Point.CARTESIAN)
+                )
+        )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setPathEndTimeoutConstraint(200)
                 .build();
 
         line15
@@ -235,8 +239,8 @@ public class AutoBasket extends OpMode {
                 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(42, 73, Point.CARTESIAN),
-                                new Point(10, 33.606, Point.CARTESIAN)
+                                new Point(37, 69, Point.CARTESIAN),
+                                new Point(10, 30, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -272,7 +276,7 @@ public class AutoBasket extends OpMode {
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0.2),actions.idle(), actions.spec_intake()));
+            }, 0.4),actions.idle(), actions.spec_intake()));
             scored1 = true;
             closed = false;
         }
@@ -281,7 +285,7 @@ public class AutoBasket extends OpMode {
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0.2),actions.idle(), actions.spec_intake()));
+            }, 0.4),actions.idle(), actions.spec_intake()));
             scored2 = true;
             closed = false;
         }
@@ -289,7 +293,7 @@ public class AutoBasket extends OpMode {
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0.2),actions.idle(), actions.spec_intake()));
+            }, 0.4),actions.idle(), actions.spec_intake()));
             scored3 = true;
             closed = false;
         }
@@ -297,7 +301,7 @@ public class AutoBasket extends OpMode {
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0.2),actions.idle(), actions.spec_intake()));
+            }, 0.4),actions.idle(), actions.spec_intake()));
             scored4 = true;
             closed = false;
         }
@@ -305,7 +309,7 @@ public class AutoBasket extends OpMode {
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0.2),actions.idle(), actions.spec_intake()));
+            }, 0.4),actions.idle(), actions.spec_intake()));
             scored5 = true;
             closed = false;
         }

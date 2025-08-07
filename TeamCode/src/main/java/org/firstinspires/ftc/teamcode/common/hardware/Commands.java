@@ -49,7 +49,9 @@ public class Commands {
 
     public SequentialCommand go_basket2()
     {
-        return new SequentialCommand(new ConditionalCommand(() -> {
+        return new SequentialCommand(new TimedCommand(() -> {
+            return robot.claw.score_spec_rotate();
+        }, 0), new ConditionalCommand(() -> {
             return robot.slides.setTargetExtension(70);
         }), new TimedCommand(() -> {
             return robot.claw.wrist_basket();
@@ -71,6 +73,19 @@ public class Commands {
         }, 0));
     }
 
+    public SequentialCommand retract()
+    {
+        return new SequentialCommand(new TimedCommand(() -> {
+            return robot.claw.close();
+        }, 0), new TimedCommand(() -> {
+            return robot.arm.intake_retract();
+        }, 0.2), new ConditionalCommand(() -> {
+            return robot.slides.setTargetExtension(0);
+        }), new TimedCommand(() -> {
+            return robot.claw.wrist_intake_idle();
+        }, 0));
+    }
+
     public SequentialCommand intake()
     {
         return new SequentialCommand(new TimedCommand(() -> {
@@ -85,12 +100,12 @@ public class Commands {
     public SequentialCommand spec_intake() {
 
         return new SequentialCommand(new TimedCommand(() -> {
-            return robot.claw.reset_angle();
-        }, 0.3), new TimedCommand(() -> {
             return robot.arm.spec_intake_arm();
         }, 0.3), new TimedCommand(() -> {
+            return robot.claw.reset_angle();
+        }, 0), new TimedCommand(() -> {
             return robot.claw.spec_intake_wrist();
-        }, 0.3), new TimedCommand(() -> {
+        }, 1.3), new TimedCommand(() -> {
             return robot.claw.open();
         }, 0.5));
     }
@@ -104,7 +119,7 @@ public class Commands {
         }, 0.3), new TimedCommand(() -> { return
                 robot.claw.score_spec_wrist();
         }, 0.3), new ConditionalCommand(() -> {
-            return robot.slides.setTargetExtension(26);
+            return robot.slides.setTargetExtension(26.5);
         }));
     }
     public SequentialCommand spec_score_auto()

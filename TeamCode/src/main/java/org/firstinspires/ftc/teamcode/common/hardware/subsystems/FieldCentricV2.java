@@ -19,7 +19,7 @@ public class FieldCentricV2 implements Subsystem {
     private double rotY;
     private double turn;
     private double lastTurn;
-    private double headingOffset = Math.PI / 2.0; //TODO GRAB FROM AUTONOMOUS
+    private double headingOffset = Math.PI; //TODO GRAB FROM AUTONOMOUS
     private double botHeading = 0;
     private double targetHeading;
     private double brake = 1.0;
@@ -45,11 +45,11 @@ public class FieldCentricV2 implements Subsystem {
     }
     @Override
     public void read() {
-         botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + headingOffset;
         x = robot.gamepad1.left_stick_x;
         y = -robot.gamepad1.left_stick_y;
         turn =  (robot.gamepad1.right_stick_x);
-        if(robot.slides.getExtensionCm() > 50)
+        if(robot.slides.getExtensionCm() > 35)
             brake = 0.4;
         else if (robot.gamepad1.right_trigger > 0 || robot.slides.getExtensionCm() > 20)
             brake = 0.5;

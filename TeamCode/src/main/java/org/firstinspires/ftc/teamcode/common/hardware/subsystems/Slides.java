@@ -15,11 +15,13 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 public class Slides implements Subsystem{
 
     RobotHardware robot = RobotHardware.getInstance();
-    public static double Po = 0, Do = 0, Fo = 0, So = 0;
+    public static double Po = 0.085, Do = 0.012, Fo = 0.035, So = 0;
     public static double Pv = 0.098, Dv = 0.012, Fv = 0.072, Sv = 0;
     boolean isretracted = true;
     public double angle = 0, targetpos = 0, currpos = 0, power = 0;
     PDFSController PDFS = new PDFSController(Pv,Dv,Fv,Sv).setFeedForwardType(PDFSController.FeedForwardType.CONSTANT).setDeadzone(3).sethomedConstant(-0.1);
+    PDFSController PDFS2 = new PDFSController(Po,Do,Fo,So).setFeedForwardType(PDFSController.FeedForwardType.CONSTANT).setDeadzone(3).sethomedConstant(-0.1);
+
 
 
     @Override
@@ -28,13 +30,18 @@ public class Slides implements Subsystem{
         currpos = getExtensionCm();
         angle = robot.pivot.getPivotAngle();
         PDFS.updateConstants(Pv, Dv, Fv, Sv);
+        PDFS2.updateConstants(Po, Do, Fo, So);
         if(targetpos != 0)
             isretracted = false;
     }
 
     @Override
     public void periodic() {
-        power = PDFS.run(currpos, targetpos, angle);
+        if(robot.pivot.getPivotAngle() > 60)
+            power = PDFS.run(currpos, targetpos, angle);
+        else {
+            power = PDFS2.run(currpos, targetpos, angle);
+        }
         if(targetpos == 0 && !isretracted)
             power = -1;
         if(robot.sliderr.isOverCurrent() && !isretracted)
