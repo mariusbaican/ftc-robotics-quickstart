@@ -38,7 +38,7 @@ public class Commands {
            return robot.claw.wrist_basket();
        }, 0), new TimedCommand(() -> {
            return robot.claw.close();
-       }, 0), new TimedCommand(() -> {
+       }, 0.3), new TimedCommand(() -> {
            return robot.arm.reset();
        }, 0.5), new ConditionalCommand(() -> {
            return robot.slides.setTargetExtension(0);
@@ -48,6 +48,17 @@ public class Commands {
    }
 
     public SequentialCommand go_basket2()
+    {
+        return new SequentialCommand(new TimedCommand(() -> {
+            return robot.claw.score_spec_rotate();
+        }, 0), new ConditionalCommand(() -> {
+            return robot.slides.setTargetExtension(71);
+        }), new TimedCommand(() -> {
+            return robot.claw.wrist_basket();
+        }, 0));
+    }
+
+    public SequentialCommand go_basket1()
     {
         return new SequentialCommand(new TimedCommand(() -> {
             return robot.claw.score_spec_rotate();
@@ -92,7 +103,7 @@ public class Commands {
             return robot.claw.wrist_intake();
         }, 0), new TimedCommand(() -> {
             return robot.arm.intake();
-        }, 0.5), new TimedCommand(() -> {
+        }, 0.3), new TimedCommand(() -> {
             return robot.claw.close();
         }, 0));
     }

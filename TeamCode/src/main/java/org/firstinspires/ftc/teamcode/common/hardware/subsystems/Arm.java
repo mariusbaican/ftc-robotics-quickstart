@@ -81,8 +81,8 @@ public class Arm implements Subsystem
     public void init(HardwareMap hwMap)
     {
         robot.set_arm.init(hwMap);
-        robot.arm.setpos(spec_arm);
-        robot.arm.setpos(spec_arm);
+        robot.set_arm.setPosition(spec_arm + 0.12);
+        robot.set_arm.setPosition(spec_arm);
     }
 
     @Override

@@ -26,13 +26,15 @@ public class  Cleaned_TeleOp extends LinearOpMode {
         ElapsedTime lastcross2   = new ElapsedTime();
         ElapsedTime lasttriangle = new ElapsedTime();
         ElapsedTime lasttrigger = new ElapsedTime();
+        ElapsedTime lasttrigger2 = new ElapsedTime();
         ElapsedTime lastcircle = new ElapsedTime();
         ElapsedTime lastbumper = new ElapsedTime();
         ElapsedTime lastlbumper = new ElapsedTime();
         ElapsedTime lastsquare = new ElapsedTime();
+        ElapsedTime lastdpad = new ElapsedTime();
 
 
-        boolean open = false, specstate = false, isintakeidle = false, right = false;
+        boolean open = false, specstate = false, isintakeidle = false, right = false, low = false;
         boolean isCareful = false;
         int state = 0;
 
@@ -51,8 +53,16 @@ public class  Cleaned_TeleOp extends LinearOpMode {
             telemetry.addData("targetext ", robot.slides.targetpos);
             telemetry.addData("forntie", robot.sensor.getDistance(DistanceUnit.CM));
             telemetry.update();
-            if(gamepad2.dpad_up)
-                isCareful = true;
+            if(gamepad2.dpad_up && lastdpad.milliseconds() > 200)
+            {
+                isCareful = !isCareful;
+                lastdpad.reset();
+            }
+
+            if(gamepad1.dpad_down && lastdpad.milliseconds() > 200)
+            {
+                low = !low;
+            }
 
             if(gamepad1.cross && lastcross.milliseconds() > 200 && (state == 6 || state == 1))
             {
@@ -70,14 +80,22 @@ public class  Cleaned_TeleOp extends LinearOpMode {
                 lastcross.reset();
             }
 
-            if(gamepad1.left_trigger > 0 && lasttrigger.milliseconds() > 200 && state == 6)
+            if(gamepad1.left_trigger > 0 && lasttrigger.milliseconds() > 200 && (state == 6  || state == 2))
             {
-                if(!right)
-                    robot.claw.go_right();
-                else
-                    robot.claw.reset_angle();
-                right = !right;
+                robot.claw.go_right();
                 lasttrigger.reset();
+            }
+
+            if(gamepad2.left_trigger > 0 && lasttrigger2.milliseconds() > 200)
+            {
+                robot.slides.setTargetExtension(robot.slides.getExtensionCm() - 1);
+                lasttrigger2.reset();
+            }
+
+            if(gamepad2.right_trigger > 0 && lasttrigger2.milliseconds() > 200)
+            {
+                robot.slides.setTargetExtension(robot.slides.getExtensionCm() + 1);
+                lasttrigger2.reset();
             }
 
 
@@ -110,7 +128,10 @@ public class  Cleaned_TeleOp extends LinearOpMode {
             if(gamepad1.triangle && lasttriangle.milliseconds() > 200 && state != 2)
             {
                 scheduler.reset();
-                scheduler.schedule(new SequentialCommand(actions.idle(), actions.go_basket2()));
+                if(!low)
+                    scheduler.schedule(new SequentialCommand(actions.idle(), actions.go_basket2()));
+                else
+                    scheduler.schedule(new SequentialCommand(actions.idle(), actions.go_basket1()));
                 lasttriangle.reset();
                 open = false;
                 state = 2;
@@ -119,26 +140,40 @@ public class  Cleaned_TeleOp extends LinearOpMode {
 
             if(gamepad1.circle && lastcircle.milliseconds() > 200 && state != 5)
             {
-                scheduler.schedule(new SequentialCommand(actions.idle(), actions.spec_score()));
+                scheduler.schedule(new SequentialCommand(new SequentialCommand(new TimedCommand(() -> {
+                    return robot.claw.reset_angle();
+                }, 0), new TimedCommand(() -> {
+                    return robot.claw.close();
+                }, 0.3), new TimedCommand(() -> {
+                    return robot.arm.reset();
+                }, 0.5), new ConditionalCommand(() -> {
+                    return robot.slides.setTargetExtension(0);
+                }), new ConditionalCommand(() -> {
+                    return robot.pivot.setTargetangle(90);
+                })), actions.spec_score()));
                 lastcircle.reset();
                 state = 5;
             }
 
-            if(gamepad1.right_bumper && lastbumper.milliseconds() > 200 && state != 6)
+            if(gamepad1.right_bumper && lastbumper.milliseconds() > 200 && state != 6 && state != 1)
             {
                 scheduler.reset();
-                scheduler.schedule(new SequentialCommand(actions.idle(),  actions.intake_idle()));
+                if(state == 20)
+                    scheduler.schedule(actions.intake_idle());
+                else{
+                    scheduler.schedule(new SequentialCommand(actions.idle(),  actions.intake_idle()));
+                }
                 open = true;
                 lastbumper.reset();
                 state = 6;
             }
-            else if(gamepad1.right_bumper && lastbumper.milliseconds() > 400 && state == 6)
+            else if(gamepad1.right_bumper && lastbumper.milliseconds() > 400 && (state == 6 || state == 1))
             {
                 scheduler.reset();
                 scheduler.schedule(actions.retract());
                 open = false;
                 lastbumper.reset();
-                state = 6;
+                state = 20;
             }
 
             if(gamepad1.square && lastsquare.milliseconds() > 200 && state != 7)

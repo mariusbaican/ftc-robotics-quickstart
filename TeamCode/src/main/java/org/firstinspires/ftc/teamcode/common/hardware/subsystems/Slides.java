@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 public class Slides implements Subsystem{
 
     RobotHardware robot = RobotHardware.getInstance();
-    public static double Po = 0.085, Do = 0.012, Fo = 0.035, So = 0;
+    public static double Po = 0.065, Do = 0.008, Fo = 0, So = 0;
     public static double Pv = 0.098, Dv = 0.012, Fv = 0.072, Sv = 0;
     boolean isretracted = true;
     public double angle = 0, targetpos = 0, currpos = 0, power = 0;

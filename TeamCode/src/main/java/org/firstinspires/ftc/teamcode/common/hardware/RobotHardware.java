@@ -100,6 +100,8 @@ public class RobotHardware
 		subsystems.clear();
 
 		drivetrain = new FieldCentricV2();
+		agatat = false;
+		ridicat = false;
 
 
 		claw = new Claw();

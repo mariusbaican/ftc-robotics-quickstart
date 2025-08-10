@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class Tuner extends LinearOpMode {
 
     public static int target = 0;
+    private boolean intake = false, retr = false;
     @Override
     public void runOpMode()
     {
@@ -32,6 +33,20 @@ public class Tuner extends LinearOpMode {
 
         while(opModeIsActive() && !isStopRequested()){
             robot.read();
+
+            if(gamepad1.right_bumper && !intake)
+            {
+                scheduler.schedule(actions.intake_idle());
+                intake = true;
+            }
+
+            if(gamepad1.left_bumper && !retr)
+            {
+                scheduler.schedule(actions.retract());
+                retr = true;
+            }
+
+
 
             if(gamepad1.a)
             {

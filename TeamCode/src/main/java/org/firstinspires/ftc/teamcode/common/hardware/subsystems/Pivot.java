@@ -48,7 +48,7 @@ public class Pivot implements Subsystem{
            power = -0.2;
 
         if(isup)
-            power = 0.2;
+            power = 0.3;
         if(isdown)
             robot.pivotEnc.reset();
 
@@ -72,7 +72,7 @@ public class Pivot implements Subsystem{
             {
                 if(Math.abs(robot.slides.getExtensionCm()) < 10 && getPivotAngle() > 80)
                 {
-                    power = 0;
+                    power = 0.2;
                     if(robot.slides.targetpos == 0)
                         robot.sliderEnc1.reset();
                     isup = true;
