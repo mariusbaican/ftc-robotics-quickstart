@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 public class Pivot implements Subsystem{
 
     RobotHardware robot = RobotHardware.getInstance();
-    public double angle = 0, power = 0, extension = 30, init_extension = 30, targetangle = 45, offset = 90;
+    public double angle = 0, power = 0, extension = 30, init_extension = 30, targetangle = 90, offset = 90;
     private boolean isdown = false;
     private boolean isup = false;
 

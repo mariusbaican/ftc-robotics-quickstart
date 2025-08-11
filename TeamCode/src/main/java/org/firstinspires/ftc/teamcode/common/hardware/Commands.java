@@ -33,19 +33,36 @@ public class Commands {
    public SequentialCommand idle()
    {
        return new SequentialCommand(new TimedCommand(() -> {
-           return robot.claw.reset_angle();
-       }, 0), new TimedCommand(() -> {
-           return robot.claw.wrist_basket();
-       }, 0), new TimedCommand(() -> {
            return robot.claw.close();
        }, 0.3), new TimedCommand(() -> {
+           return robot.claw.wrist_basket();
+       }, 0), new TimedCommand(() -> {
            return robot.arm.reset();
-       }, 0.5), new ConditionalCommand(() -> {
+       }, 0.5), new TimedCommand(() -> {
+           return robot.claw.reset_angle();
+       }, 0), new ConditionalCommand(() -> {
            return robot.slides.setTargetExtension(0);
        }), new ConditionalCommand(() -> {
            return robot.pivot.setTargetangle(90);
        }));
    }
+
+    public SequentialCommand idle_auto()
+    {
+        return new SequentialCommand(new TimedCommand(() -> {
+            return robot.claw.reset_angle();
+        }, 0), new TimedCommand(() -> {
+            return robot.claw.wrist_basket();
+        }, 0), new TimedCommand(() -> {
+            return robot.arm.vert();
+        }, 0.5), new TimedCommand(() -> {
+            return robot.claw.close();
+        }, 0.3), new ConditionalCommand(() -> {
+            return robot.slides.setTargetExtension(0);
+        }), new ConditionalCommand(() -> {
+            return robot.pivot.setTargetangle(90);
+        }));
+    }
 
     public SequentialCommand go_basket2()
     {
@@ -87,8 +104,6 @@ public class Commands {
     public SequentialCommand retract()
     {
         return new SequentialCommand(new TimedCommand(() -> {
-            return robot.claw.close();
-        }, 0), new TimedCommand(() -> {
             return robot.arm.intake_retract();
         }, 0.2), new ConditionalCommand(() -> {
             return robot.slides.setTargetExtension(0);

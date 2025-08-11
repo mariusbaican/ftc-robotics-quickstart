@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleOP;
 
-import static android.os.SystemClock.sleep;
 import static java.lang.Math.abs;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierLine;
-import com.pedropathing.pathgen.PathBuilder;
-import com.pedropathing.util.Constants;
-import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,7 +14,6 @@ import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.commandbase.CommandScheduler;
 import org.firstinspires.ftc.teamcode.common.commandbase.ConditionalCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.SequentialCommand;
@@ -42,8 +35,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
  * @version 1.0, 3/12/2024
  */
 @Config
-@Autonomous (name = "AutoBasket", group = "Examples")
-public class AutoBasket extends OpMode {
+@Autonomous (name = "_AutoSpecimene", group = "Examples")
+public class _AutoSpecimene extends OpMode {
     private Telemetry telemetryA;
 
 
@@ -260,7 +253,7 @@ public class AutoBasket extends OpMode {
         actions = new Commands();
         robot.init(hardwareMap).setGamepads(gamepad1, gamepad2);
         scheduler.reset();
-        scheduler.schedule(new SequentialCommand(actions.idle(), actions.spec_score()));
+        scheduler.schedule(new SequentialCommand(actions.idle_auto(), actions.spec_score()));
 
     }
 
@@ -278,27 +271,29 @@ public class AutoBasket extends OpMode {
         if(pathState == 2 && !scored1)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
+                return robot.claw.close();
+            }, 0.2), new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0),actions.idle(),new ConditionalCommand(() -> {
+            }, 0),actions.idle_auto(),new ConditionalCommand(() -> {
                 return robot.pivot.setTargetangle(0);
             })));
             scored1 = true;
             closed = false;
         }
 
-        if((pathState == 6 || pathState == 7) && !up && follower.getPose().getX() < 30 && follower.getPose().getY() < 12)
+        if((pathState == 6 || pathState == 7) && !up && follower.getPose().getX() < 24 && follower.getPose().getY() < 12)
         {
             up = true;
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0.2),actions.idle(),actions.spec_intake()));
+            }, 0.2),actions.idle_auto(),actions.spec_intake()));
         }
 
         if(pathState == 9 && !scored2)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0),actions.idle(), actions.spec_intake()));
+            }, 0),actions.idle_auto(), actions.spec_intake()));
             scored2 = true;
             closed = false;
         }
@@ -306,7 +301,7 @@ public class AutoBasket extends OpMode {
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0),actions.idle(), actions.spec_intake()));
+            }, 0),actions.idle_auto(), actions.spec_intake()));
             scored3 = true;
             closed = false;
         }
@@ -314,7 +309,7 @@ public class AutoBasket extends OpMode {
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0),actions.idle(), actions.spec_intake()));
+            }, 0),actions.idle_auto(), actions.spec_intake()));
             scored4 = true;
             closed = false;
         }
@@ -322,7 +317,7 @@ public class AutoBasket extends OpMode {
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                 return robot.claw.open();
-            }, 0),actions.idle(), actions.spec_intake()));
+            }, 0),actions.idle_auto(), actions.spec_intake()));
             scored5 = true;
             closed = false;
         }
@@ -387,7 +382,7 @@ public class AutoBasket extends OpMode {
                 break;
 
             case 1:
-                if(!follower.isBusy()) {
+                if(!follower.isBusy() || follower.getPose().getX() > 38) {
                     follower.followPath(line2, true);
                     setPathState(2);
                 }
@@ -417,7 +412,6 @@ public class AutoBasket extends OpMode {
                 }
                 break;
             case 6:
-                adjusted = false;
                 if(!follower.isBusy()) {
                     follower.followPath(line7, true);
                     setPathState(7);
@@ -440,7 +434,6 @@ public class AutoBasket extends OpMode {
                             .setConstantHeadingInterpolation(Math.toRadians(180))
                             .setPathEndTimeoutConstraint(400)
                             .build(), true);
-                    adjusted = true;
                     scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                         return robot.claw.open();
                     }, 0.3),new TimedCommand(() -> {
@@ -450,7 +443,6 @@ public class AutoBasket extends OpMode {
                 }
                 break;
             case 8:
-                adjusted = false;
                 if(!follower.isBusy()) {
                     follower.followPath(line9, true);
                     setPathState(9);
@@ -472,7 +464,6 @@ public class AutoBasket extends OpMode {
                             .setConstantHeadingInterpolation(Math.toRadians(180))
                             .setPathEndTimeoutConstraint(400)
                             .build(), true);
-                    adjusted = true;
                     scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                         return robot.claw.open();
                     }, 0.3),new TimedCommand(() -> {
@@ -504,7 +495,6 @@ public class AutoBasket extends OpMode {
                             .setConstantHeadingInterpolation(Math.toRadians(180))
                             .setPathEndTimeoutConstraint(400)
                             .build(), true);
-                    adjusted = true;
                     scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
                         return robot.claw.open();
                     }, 0.3),new TimedCommand(() -> {
@@ -514,7 +504,6 @@ public class AutoBasket extends OpMode {
                 }
                 break;
             case 12:
-                adjusted = false;
                 if(!follower.isBusy()) {
                     follower.followPath(line13, true);
                     setPathState(13);
@@ -536,17 +525,15 @@ public class AutoBasket extends OpMode {
                             .setConstantHeadingInterpolation(Math.toRadians(180))
                             .setPathEndTimeoutConstraint(400)
                             .build(), true);
+                    scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
+                        return robot.claw.open();
+                    }, 0.3),new TimedCommand(() -> {
+                        return robot.claw.close();
+                    }, 0)));
+                    lastclosed.reset();
                 }
-                adjusted = true;
-                scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                    return robot.claw.open();
-                }, 0.3),new TimedCommand(() -> {
-                    return robot.claw.close();
-                }, 0)));
-                lastclosed.reset();
                 break;
             case 14:
-                adjusted = false;
                 if(!follower.isBusy()) {
                     follower.followPath(line15, true);
                     setPathState(15);

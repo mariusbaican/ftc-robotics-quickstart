@@ -62,6 +62,12 @@ public class Arm implements Subsystem
         return true;
     }
 
+    public boolean vert()
+    {
+        arm_pos = 0.8;
+        return true;
+    }
+
     public boolean intake()
     {
         arm_pos = intake;

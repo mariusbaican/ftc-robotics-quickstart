@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 public class Circle extends OpMode {
     private Telemetry telemetryA;
 
-    public static double RADIUS = 10;
+    public static double RADIUS = 15;
 
     private Follower follower;
 

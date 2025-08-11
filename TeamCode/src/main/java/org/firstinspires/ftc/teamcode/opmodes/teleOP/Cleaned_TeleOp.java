@@ -86,13 +86,13 @@ public class  Cleaned_TeleOp extends LinearOpMode {
                 lasttrigger.reset();
             }
 
-            if(gamepad2.left_trigger > 0 && lasttrigger2.milliseconds() > 200)
+            if(gamepad1.left_trigger > 0 && lasttrigger2.milliseconds() > 200 && state == 5)
             {
                 robot.slides.setTargetExtension(robot.slides.getExtensionCm() - 1);
                 lasttrigger2.reset();
             }
 
-            if(gamepad2.right_trigger > 0 && lasttrigger2.milliseconds() > 200)
+            if(gamepad1.right_trigger > 0 && lasttrigger2.milliseconds() > 200 && state == 5)
             {
                 robot.slides.setTargetExtension(robot.slides.getExtensionCm() + 1);
                 lasttrigger2.reset();

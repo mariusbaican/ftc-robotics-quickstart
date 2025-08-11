@@ -66,7 +66,6 @@ public class Slides implements Subsystem{
         robot.sliderl.init(hwMap);
         robot.sliderl.setDirection(DcMotorSimple.Direction.REVERSE);
         robot.sliderEnc1.init(hwMap);
-        robot.sliderEnc1.reset();
         robot.sliderr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.sliderl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }

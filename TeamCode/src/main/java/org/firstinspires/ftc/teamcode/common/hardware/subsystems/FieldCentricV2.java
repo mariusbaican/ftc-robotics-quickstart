@@ -50,9 +50,12 @@ public class FieldCentricV2 implements Subsystem {
         y = -robot.gamepad1.left_stick_y;
         turn =  (robot.gamepad1.right_stick_x);
         if(robot.slides.getExtensionCm() > 35)
-            brake = 0.4;
-        else if (robot.gamepad1.right_trigger > 0 || robot.slides.getExtensionCm() > 20)
+            brake = 0.37;
+        else if (robot.gamepad1.right_trigger > 0)
             brake = 0.5;
+        else if(robot.slides.getExtensionCm() > 20){
+            brake = 0.65;
+        }
         else
             brake = 1.0;
         if (robot.gamepad1.options) {
