@@ -13,14 +13,14 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
 @Config
 public class Pivot implements Subsystem{
-
+    //Luam instanta robotului si definim variabile necesare
     RobotHardware robot = RobotHardware.getInstance();
-    public double angle = 0, power = 0, extension = 30, init_extension = 30, targetangle = 90, offset = 90;
+    public double angle = 0, power = 0, targetangle = 90, offset = 90;
     private boolean isdown = false;
     private boolean isup = false;
 
 
-
+    //luam informatii din senzori
     @Override
     public void read() {
         robot.pivoting.setCurrentAlert(7 , CurrentUnit.AMPS);
@@ -36,6 +36,7 @@ public class Pivot implements Subsystem{
         //extension = robot.slides.getExtensionCm() + init_extension;
     }
 
+    //prelucram informatiile (functia aceasta este actionata automat de scheduler)
     @Override
     public void periodic() {
        if(targetangle == 90 && !isup && (angle >= 88 || angle <= 50))
@@ -81,11 +82,13 @@ public class Pivot implements Subsystem{
         }
     }
 
+    //setam puterile la motoare sau pozitiile la servouri
     @Override
     public void write() {
         robot.pivoting.setPower(power);
     }
 
+    //functia de initializare apelata de RobotHardware
     @Override
     public void init(HardwareMap hwMap) {
         robot.pivoting.init(hwMap);
@@ -94,6 +97,7 @@ public class Pivot implements Subsystem{
         robot.pivotEnc.reset();
     }
 
+    //diferite functii speciale pentru un anumit mecanism
     public double getPivotAngle()
     {
         if((robot.pivotEnc.getCurrentPosition() * 90) / 2875.0 + offset < 0)

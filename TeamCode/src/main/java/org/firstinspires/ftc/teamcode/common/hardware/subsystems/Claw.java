@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.hardware.subsystems.Camera;
 
-public class   Claw implements Subsystem {
+public class Claw implements Subsystem {
 
     private RobotHardware robot = RobotHardware.getInstance();
 
@@ -21,7 +21,7 @@ public class   Claw implements Subsystem {
     private double angle = 90;
     private double wrist_angle = 0.5;
 
-    public boolean align()
+    public void align()
     {
         if(angle <= 90 && angle > 10)
         {
@@ -31,83 +31,70 @@ public class   Claw implements Subsystem {
         {
             set_angle_pos = (-(180 - angle) * ratio + robot.set_angle.getPosition());
         }
-        return true;
     }
 
-    public boolean wrist_intake()
+    public void wrist_intake()
     {
-        wrist_angle = 0.72;//TODO set constant angle
-        return true;
+        wrist_angle = 0.92;//TODO set constant angle
     }
 
-    public boolean wrist_intake_idle()
+    public void wrist_intake_idle()
     {
-        wrist_angle = 0.78;//TODO set constant angle
-        return true;
+        wrist_angle = 0.98;//TODO set constant angle
     }
 
-    public boolean reset_wrist()
+    public void reset_wrist()
     {
         wrist_angle = 0.5;//TODO set constant angle
-        return true;
     }
 
 
-    public boolean spec_intake()
+    public void spec_intake()
     {
         wrist_angle = 0.58;//TODO set constant angle
-        return true;
     }
 
 
-    public boolean wrist_basket()
+    public void wrist_basket()
     {
-        wrist_angle = 0.41;//TODO set constant angle
-        return true;
+        wrist_angle = 0.61;//TODO set constant angle
     }
 
-    public boolean wrist_spec()
+    public void wrist_spec()
     {
         wrist_angle = 0.56;//TODO set constant angle
-        return true;
     }
 
-    public  boolean go_up()
+    public void go_up()
     {
         wrist_angle = wrist_angle + 0.04;
-        return  true;
     }
 
-    public  boolean go_down()
+    public void go_down()
     {
         wrist_angle = wrist_angle - 0.07;
-        return  true;
     }
 
-    public boolean go_left()
+    public void go_left()
     {
         set_angle_pos = 0.25;
-        return true;
     }
 
-    public boolean spec_angle()
+    public void spec_angle()
     {
         set_angle_pos = 0.20;
-        return true;
     }
 
-    public boolean go_right()
+    public void go_right()
     {
         if(set_angle_pos == 0.5)
             set_angle_pos = 0.8;
         else set_angle_pos = 0.5;
-        return true;
     }
 
-    public boolean open()
+    public void open()
     {
         state_pos = Open;
-        return true;
     }
 
     public double pos()
@@ -115,32 +102,45 @@ public class   Claw implements Subsystem {
         return  robot.state.getPosition();
     }
 
-    public boolean close()
+    public void close()
     {
         state_pos = Closed;
-        return true;
     }
 
-    public boolean reset_angle()
+    public void reset_angle()
     {
         set_angle_pos = start;
-        return true;
     }
 
-    public boolean score_spec_wrist()
+    public void get()
     {
-        wrist_angle = 0.66;
-        return true;
+        wrist_angle = 1;
+
     }
 
-    public boolean score_spec_rotate()
+    public void wait_up()
+    {
+        wrist_angle = 1;
+
+    }
+
+
+    public void score_spec_wrist()
+    {
+        wrist_angle = 0.835;
+
+    }
+
+    public void score_spec_rotate()
     {
         set_angle_pos = 0.2;
-        return true;
+
     }
- public boolean spec_intake_wrist() {
-        wrist_angle = 0.3;
-        return true; }
+
+    public void spec_intake_wrist() {
+        wrist_angle = 0.5;
+
+    }
 
 
     @Override

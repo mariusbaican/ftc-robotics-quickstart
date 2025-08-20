@@ -1,48 +1,85 @@
 package org.firstinspires.ftc.teamcode.common.commandbase;
 
-import static org.json.JSONObject.NULL;
+
+import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Usage:
- * Allows both boolean and void functions:
- * new TimedCommand(() -> {return class.method();}, timeoutSeconds);
+ * Allows any function and will return true if the timeout is reached
+ * or the function returns true(unless it is not a boolean lambda)
+ * new TimedCommand(() -> class.method(), timeoutSeconds);
  */
-public class TimedCommand implements Command
-{
-    private ElapsedTime timer = new ElapsedTime();
-    private double timeoutSeconds;
-    private BooleanFunction booleanFunction;
-    private VoidFunction voidFunction;
+public class TimedCommand extends Command {
+    private ElapsedTime timer;
+    private final double timeoutSeconds;
+    private final LambdaFunction<?> function;
 
-    public TimedCommand (BooleanFunction booleanFunction, double timeoutSeconds)
-    {
-        this.booleanFunction = booleanFunction;
+    /**
+     * Allows any function and will return true if the timeout is reached
+     * @param function The function to run
+     * @param timeoutSeconds The amount of time to wait
+     */
+    public TimedCommand(LambdaFunction<?> function, double timeoutSeconds) {
+        this.function = function;
         this.timeoutSeconds = timeoutSeconds;
     }
 
-    public TimedCommand(VoidFunction voidFunction, double timeoutSeconds)
-    {
-        this.voidFunction = voidFunction;
+    /**
+     * Allows any function and will return true if the timeout is reached
+     * @param commandName The name of the command
+     * @param function The function to run
+     * @param timeoutSeconds The amount of time to wait
+     */
+    public TimedCommand(String commandName, LambdaFunction<?> function, double timeoutSeconds) {
+        super(commandName);
+        this.function = function;
+        this.timeoutSeconds = timeoutSeconds;
+    }
+
+    /**
+     * Allows any function and will return true if the timeout is reached
+     * @param function The function to run
+     * @param timeoutSeconds The amount of time to wait
+     */
+    public TimedCommand(Runnable function, double timeoutSeconds) {
+        this.function = () -> {
+            function.run();
+            return null;
+        };
+        this.timeoutSeconds = timeoutSeconds;
+    }
+
+    /**
+     * Allows any function and will return true if the timeout is reached
+     * @param commandName The name of the command
+     * @param function The function to run
+     * @param timeoutSeconds The amount of time to wait
+     */
+    public TimedCommand(String commandName, Runnable function, double timeoutSeconds) {
+        super(commandName);
+        this.function = () -> {
+            function.run();
+            return null;
+        };
         this.timeoutSeconds = timeoutSeconds;
     }
 
     @Override
     public boolean run() {
-        if (booleanFunction != NULL)
-            booleanFunction.run();
-        else
-            voidFunction.run();
+        if(timer == null)
+            timer = new ElapsedTime();
 
-        if (timer.seconds() > timeoutSeconds)
-            return true;
-        else
-            return false;
+        boolean value = function.run() != null && (boolean) function.run();
+
+        //TODO: test if this works
+        return timer.seconds() >= timeoutSeconds || value;
     }
 
-    public void startTimer()
-    {
-        timer.reset();
+    @NonNull
+    @Override
+    public Command clone() {
+        return new TimedCommand(getCommandName(), function, timeoutSeconds);
     }
 }

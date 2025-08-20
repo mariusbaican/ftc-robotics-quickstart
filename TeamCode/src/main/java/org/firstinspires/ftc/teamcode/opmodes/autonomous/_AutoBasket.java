@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleOP;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import static java.lang.Math.abs;
 
@@ -43,14 +43,14 @@ public class _AutoBasket extends OpMode {
     private Follower follower;
     ElapsedTime lastclosed = new ElapsedTime();
     ElapsedTime timp = new ElapsedTime();
-    ElapsedTime scored = new ElapsedTime();
+    ElapsedTime timer = new ElapsedTime();
     private PathChain circle;
     public  PathChain line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11, line12, line13, line14, line15,line16;
     private double xPath = 10, dist = 16;
     private  double yPath = 125;
     private double val = 0.1;
     private int pathState = 0;
-    private boolean scored1 = false, scored2 = false, amfost = false, scored3 = false, scored4 = false, scored5 = false, took2 = false, took3 = false, took4 = false, took5 = false, closed = false, adjusted = false, pivotat = false, up = false;
+    private boolean asteptat = false, luat = false, amfost = false, scored3 = false, scored4 = false, scored5 = false, took2 = false, took3 = false, took4 = false, took5 = false, closed = false, adjusted = false, pivotat = false, up = false;
     RobotHardware robot;
     private int step = 0;
     private int step_2 = 0;
@@ -58,6 +58,7 @@ public class _AutoBasket extends OpMode {
     CommandScheduler scheduler;
     private double x = 13;
     private double y = 128;
+    boolean rotationismings = true;
     /**
      * This initializes the Follower and creates the PathChain for the "circle". Additionally, this
      * initializes the FTC Dashboard telemetry.
@@ -72,56 +73,56 @@ public class _AutoBasket extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Point(6.385, 113.083, Point.CARTESIAN),
-                                new Point(x, y-2, Point.CARTESIAN)
+                                new Point(x-3, y-5, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
-                .setPathEndTimeoutConstraint(4000)
+                .setPathEndTimeoutConstraint(3500)
                 .build();
 
         line2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(x, y-2, Point.CARTESIAN),
-                                new Point(31.597, 122.660, Point.CARTESIAN)
+                                new Point(x-2, y-5, Point.CARTESIAN),
+                                new Point(30, 123.2, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
-                .setPathEndTimeoutConstraint(4000)
+                .setPathEndTimeoutConstraint(1000)
                 .build();
 
         line3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(31.597, 122.660, Point.CARTESIAN),
+                                new Point(30, 123.2, Point.CARTESIAN),
                                 new Point(x, y-2, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
-                .setPathEndTimeoutConstraint(4000)
+                .setPathEndTimeoutConstraint(3500)
                 .build();
 
         line4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 new Point(x, y-2, Point.CARTESIAN),
-                                new Point(31.093, 131.734, Point.CARTESIAN)
+                                new Point(30, 128.734, Point.CARTESIAN)
                         )
                 )
 
-                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(1))
-                .setPathEndTimeoutConstraint(4000)
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
+                .setPathEndTimeoutConstraint(1000)
                 .build();
 
         line5 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(31.093, 131.734, Point.CARTESIAN),
+                                new Point(30, 128.734, Point.CARTESIAN),
                                 new Point(x, y-2, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(1), Math.toRadians(-45))
-                .setPathEndTimeoutConstraint(4000)
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
+                .setPathEndTimeoutConstraint(3500)
                 .build();
 
         line6 = follower.pathBuilder()
@@ -129,36 +130,36 @@ public class _AutoBasket extends OpMode {
                         new BezierCurve(
                                 new Point(x, y-2, Point.CARTESIAN),
                                 new Point(38.646, 115.267, Point.CARTESIAN),
-                                new Point(45.368, 129.566, Point.CARTESIAN)
+                                new Point(42.568, 131.566, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90))
-                .setPathEndTimeoutConstraint(4000)
+                .setPathEndTimeoutConstraint(1000)
                 .build();
 
         line7 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(45.368, 129.566, Point.CARTESIAN),
-                                new Point(x, y-2, Point.CARTESIAN)
+                                new Point(42.568, 131.566, Point.CARTESIAN),
+                                new Point(x+2, y-2, Point.CARTESIAN)
 
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(-45))
-                .setPathEndTimeoutConstraint(4000)
+                .setPathEndTimeoutConstraint(3500)
                 .build();
 
 
         line8 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(x, y-2, Point.CARTESIAN),
+                                new Point(x+2, y-2, Point.CARTESIAN),
                                 new Point(56.457, 129.886, Point.CARTESIAN),
                                 new Point(65.415, 101.190, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90))
-                .setPathEndTimeoutConstraint(2000)
+                .setPathEndTimeoutConstraint(1500)
                 .build();
 
 
@@ -190,7 +191,7 @@ public class _AutoBasket extends OpMode {
         follower.update();
         telemetry.update();
 
-        if(follower.getPose().getX() < 17 && follower.getPose().getY() > 125 && timp.milliseconds() > 500 && !up && ((pathState == 1 || pathState == 2) || (pathState == 3 || pathState == 4) || (pathState == 5 || pathState == 6) || (pathState == 7 || pathState == 8)))
+        if(follower.getPose().getX() < 20 && follower.getPose().getY() > 120 && timp.milliseconds() > 500 && !up && ((pathState == 1 || pathState == 2) || (pathState == 3 || pathState == 4) || (pathState == 5 || pathState == 6) || (pathState == 7 || pathState == 8)))
         {
             if(!amfost)
             {
@@ -200,9 +201,9 @@ public class _AutoBasket extends OpMode {
             else if(timp.milliseconds() > 500 && !up)
             {
                 up=true;
-                scheduler.schedule(new SequentialCommand(actions.idle(), actions.go_basket2(), new TimedCommand(() -> {
-                    return robot.claw.open();
-                }, 0), actions.idle(), new ConditionalCommand(() -> {
+                scheduler.schedule(new SequentialCommand(actions.idle(), actions.go_basket2_auto(), new TimedCommand(() -> {
+                     robot.claw.open();
+                }, 3.5), actions.idle(), new ConditionalCommand(() -> {
                     return robot.pivot.setTargetangle(0);
                 })));
             }
@@ -213,6 +214,31 @@ public class _AutoBasket extends OpMode {
             amfost = false;
             up = false;
         }
+
+        if(follower.getPose().getX() > 27 && follower.getPose().getY() > 117 && !asteptat)
+        {
+            scheduler.schedule(actions.down_auto());
+            timer.reset();
+            asteptat = true;
+        }
+        if(follower.getPose().getX() > 27 && follower.getPose().getY() > 117 && !luat && timer.milliseconds() > 500)
+        {
+            scheduler.schedule(actions.get());
+            luat = true;
+        }
+
+        if(follower.getPose().getX() < 20)
+        {
+            asteptat = false;
+            luat = false;
+        }
+        if(follower.getPose().getX() > 35 && follower.getPose().getY() > 125 && rotationismings == true && pathState == 6 )
+        {
+            robot.claw.go_right();
+            rotationismings = false;
+
+        }
+
 
         // Feedback to Driver Hub
         telemetry.addData("closed", lastclosed.milliseconds());

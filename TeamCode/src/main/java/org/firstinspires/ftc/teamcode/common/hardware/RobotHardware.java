@@ -37,8 +37,6 @@ public class RobotHardware
 {
 	public static RobotHardware robotHardware = null;
 
-	private static boolean resetPinpoint = true;
-
 	public double voltage = 12.0;
 
 	// Declare Devices
@@ -46,15 +44,12 @@ public class RobotHardware
 	LynxModule expansionHub;
 
 
-
-
-
-
 	public Gamepad gamepad1;
 	public Gamepad lastGamepad1;
 	public Gamepad gamepad2;
 	public Gamepad lastGamepad2;
 
+	//Declare motors, servos and sensors just like on the driver station
 	public BetterMotor frontLeft = new BetterMotor("frontLeft");
 	public BetterMotor rearLeft = new BetterMotor("rearLeft");
 	public BetterMotor rearRight = new BetterMotor("rearRight");
@@ -79,8 +74,7 @@ public class RobotHardware
 	public RevColorSensorV3 sensor;
 
 
-
-	// Declare Subsystems
+	// Declare Subsystems and useful variables
 	public Claw claw;
 	public Arm arm;
 	public Pivot pivot;
@@ -93,30 +87,19 @@ public class RobotHardware
 	public boolean agatat = false;
 	public boolean ridicat = false;
 
-	ArrayList<Subsystem> subsystems = new ArrayList<>();
+	public ArrayList<Subsystem> subsystems = new ArrayList<>();
 
 	public RobotHardware init(HardwareMap hwMap)
 	{
 		subsystems.clear();
+		agatat = false; ridicat = false;
 
-		drivetrain = new FieldCentricV2();
-		agatat = false;
-		ridicat = false;
+		//"pornim" fiecare clasa pentru fiecare mecanism
+		claw = new Claw(); arm = new Arm(); pto = new Pto(); pivot = new Pivot(); slides = new Slides(); drivetrain = new FieldCentricV2();
 
-
-		claw = new Claw();
-		arm = new Arm();
-		pto = new Pto();
-		pivot = new Pivot();
-		slides = new Slides();
-
-		//camera = new Camera();
-
-
-
+		//definim si initializam control hubul si expansion hubul (procesoarele robotului)
 		controlHub = hwMap.get(LynxModule.class, "Control Hub");
 		expansionHub = hwMap.get(LynxModule.class, "Expansion Hub 3");
-		sensor = hwMap.get(RevColorSensorV3.class, "csensor");
 
 		controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 		expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -124,33 +107,25 @@ public class RobotHardware
 		expansionHub.clearBulkCache();
 		voltageSupplier = () -> controlHub.getAuxiliaryVoltage(VoltageUnit.VOLTS);
 
-		imu = hwMap.get(IMU.class, "imu");
-
+		//definim si initializam imu (giroscopul care ne permite sa aflam orientarea robotului)
 		IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
 				RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
 				RevHubOrientationOnRobot.UsbFacingDirection.UP));
+		imu = hwMap.get(IMU.class, "imu"); imu.initialize(parameters);
 
-		imu.initialize(parameters);
+		//adaugam fiecare mecanism in lista cu subsisteme
+		subsystems.add(claw); subsystems.add(arm); subsystems.add(drivetrain); subsystems.add(slides); subsystems.add(pto); subsystems.add(pivot);
 
-		//pinpoint = hwMap.get(GoBildaPinpointDriver.class, "odo");
-
-		subsystems.add(claw);
-		subsystems.add(arm);
-		subsystems.add(drivetrain);
-		subsystems.add(slides);
-		subsystems.add(pto);
+		//initializam motoarele de la sasiu
 		frontLeft.init(hwMap);
 		rearLeft.init(hwMap);
 		rearRight.init(hwMap);
 		frontRight.init(hwMap);
-		//pinpoint.resetPosAndIMU();
-		subsystems.add(pivot);
 
+		//initializam toate mecanismele din lista de subsisteme
 		for (Subsystem subsystem : subsystems)
 			subsystem.init(hwMap);
-
-		CommandScheduler.getInstance().addSubsystems(subsystems);
-
+		//Adaugam subsistemele in instanta de commandbase pentru ca acesta sa le poata actiona
 		return this;
 	}
 

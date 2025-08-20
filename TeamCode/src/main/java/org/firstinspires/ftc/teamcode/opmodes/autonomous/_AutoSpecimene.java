@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleOP;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import static java.lang.Math.abs;
 
@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.SequentialCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.TimedCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Commands;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.common.hardware.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
@@ -34,6 +35,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+
 @Config
 @Autonomous (name = "_AutoSpecimene", group = "Examples")
 public class _AutoSpecimene extends OpMode {
@@ -121,7 +123,7 @@ public class _AutoSpecimene extends OpMode {
                         new BezierCurve(
                                 new Point(21.340, 12.770, Point.CARTESIAN),
                                 new Point(40.663, 14.618, Point.CARTESIAN),
-                                new Point(60, 5, Point.CARTESIAN)
+                                new Point(60, 6.5, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -130,16 +132,16 @@ public class _AutoSpecimene extends OpMode {
         line7 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(58, 5, Point.CARTESIAN),
-                                new Point(30, 5, Point.CARTESIAN)
+                                new Point(60, 6.5, Point.CARTESIAN),
+                                new Point(30, 6.5, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .setPathEndTimeoutConstraint(1000)
                 .addPath(
                         new BezierLine(
-                                new Point(30, 5, Point.CARTESIAN),
-                                new Point(12, 30, Point.CARTESIAN)
+                                new Point(30, 6.5, Point.CARTESIAN),
+                                new Point(12, 27, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -149,7 +151,7 @@ public class _AutoSpecimene extends OpMode {
         line8 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(12, 30, Point.CARTESIAN),
+                                new Point(12, 27, Point.CARTESIAN),
                                 new Point(17.97899649941657, 67.8833138856476, Point.CARTESIAN),
                                 new Point(39, 75, Point.CARTESIAN)
                         )
@@ -271,9 +273,9 @@ public class _AutoSpecimene extends OpMode {
         if(pathState == 2 && !scored1)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                return robot.claw.close();
+                robot.claw.close();
             }, 0.2), new TimedCommand(() -> {
-                return robot.claw.open();
+                robot.claw.open();
             }, 0),actions.idle_auto(),new ConditionalCommand(() -> {
                 return robot.pivot.setTargetangle(0);
             })));
@@ -281,18 +283,18 @@ public class _AutoSpecimene extends OpMode {
             closed = false;
         }
 
-        if((pathState == 6 || pathState == 7) && !up && follower.getPose().getX() < 24 && follower.getPose().getY() < 12)
+        if((pathState == 6 || pathState == 7) && !up && follower.getPose().getX() < 35 && follower.getPose().getY() < 12)
         {
             up = true;
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                return robot.claw.open();
-            }, 0.2),actions.idle_auto(),actions.spec_intake()));
+                robot.claw.open();
+            }, 0),actions.idle_auto(),actions.spec_intake()));
         }
 
         if(pathState == 9 && !scored2)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                return robot.claw.open();
+                robot.claw.open();
             }, 0),actions.idle_auto(), actions.spec_intake()));
             scored2 = true;
             closed = false;
@@ -300,7 +302,7 @@ public class _AutoSpecimene extends OpMode {
         if(pathState == 11 && !scored3)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                return robot.claw.open();
+                robot.claw.open();
             }, 0),actions.idle_auto(), actions.spec_intake()));
             scored3 = true;
             closed = false;
@@ -308,7 +310,7 @@ public class _AutoSpecimene extends OpMode {
         if(pathState == 13 && !scored4)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                return robot.claw.open();
+                robot.claw.open();
             }, 0),actions.idle_auto(), actions.spec_intake()));
             scored4 = true;
             closed = false;
@@ -316,7 +318,7 @@ public class _AutoSpecimene extends OpMode {
         if(pathState == 15 && !scored5)
         {
             scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                return robot.claw.open();
+                robot.claw.open();
             }, 0),actions.idle_auto(), actions.spec_intake()));
             scored5 = true;
             closed = false;
@@ -324,23 +326,31 @@ public class _AutoSpecimene extends OpMode {
 
         if(pathState == 8 && !took2)
         {
-            scheduler.schedule(actions.spec_score());
+            scheduler.schedule(new SequentialCommand(actions.spec_score(), new TimedCommand(() -> {
+                robot.claw.close();
+            }, 0)));
             took2 = true;
         }
 
         if(pathState == 10 && !took3)
         {
-            scheduler.schedule(actions.spec_score());
+            scheduler.schedule(new SequentialCommand(actions.spec_score(), new TimedCommand(() -> {
+                robot.claw.close();
+            }, 0)));
             took3 = true;
         }
         if(pathState == 12 && !took4)
         {
-            scheduler.schedule(actions.spec_score());
+            scheduler.schedule(new SequentialCommand(actions.spec_score(), new TimedCommand(() -> {
+                robot.claw.close();
+            }, 0)));
             took4 = true;
         }
         if(pathState == 14 && !took5)
         {
-            scheduler.schedule(actions.spec_score());
+            scheduler.schedule(new SequentialCommand(actions.spec_score(), new TimedCommand(() -> {
+                robot.claw.close();
+            }, 0)));
             took5 = true;
         }
 
@@ -363,6 +373,7 @@ public class _AutoSpecimene extends OpMode {
 
         telemetry.update();
         scheduler.run();
+        robot.subsystems.forEach(Subsystem::periodic);
         robot.write();
         robot.clearCache();
     }
@@ -435,9 +446,9 @@ public class _AutoSpecimene extends OpMode {
                             .setPathEndTimeoutConstraint(400)
                             .build(), true);
                     scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                        return robot.claw.open();
+                        robot.claw.open();
                     }, 0.3),new TimedCommand(() -> {
-                        return robot.claw.close();
+                        robot.claw.close();
                     }, 0)));
                     lastclosed.reset();
                 }
@@ -465,9 +476,9 @@ public class _AutoSpecimene extends OpMode {
                             .setPathEndTimeoutConstraint(400)
                             .build(), true);
                     scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                        return robot.claw.open();
+                        robot.claw.open();
                     }, 0.3),new TimedCommand(() -> {
-                        return robot.claw.close();
+                        robot.claw.close();
                     }, 0)));
                     lastclosed.reset();
                 }
@@ -496,9 +507,9 @@ public class _AutoSpecimene extends OpMode {
                             .setPathEndTimeoutConstraint(400)
                             .build(), true);
                     scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                        return robot.claw.open();
+                        robot.claw.open();
                     }, 0.3),new TimedCommand(() -> {
-                        return robot.claw.close();
+                        robot.claw.close();
                     }, 0)));
                     lastclosed.reset();
                 }
@@ -526,9 +537,9 @@ public class _AutoSpecimene extends OpMode {
                             .setPathEndTimeoutConstraint(400)
                             .build(), true);
                     scheduler.schedule(new SequentialCommand(new TimedCommand(() -> {
-                        return robot.claw.open();
+                        robot.claw.open();
                     }, 0.3),new TimedCommand(() -> {
-                        return robot.claw.close();
+                        robot.claw.close();
                     }, 0)));
                     lastclosed.reset();
                 }

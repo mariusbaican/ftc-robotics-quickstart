@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.hardware.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -7,9 +8,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.common.controltheory.PDFSController;
+import org.firstinspires.ftc.teamcode.common.controltheory.SimpleMath;
+import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.opencv.core.Mat;
+
+@Config
 public class FieldCentricV2 implements Subsystem {
 
     RobotHardware robot = RobotHardware.getInstance();
@@ -17,12 +24,18 @@ public class FieldCentricV2 implements Subsystem {
     private double y;
     private double rotX;
     private double rotY;
-    private double turn;
+    public double turn;
     private double lastTurn;
-    private double headingOffset = Math.PI; //TODO GRAB FROM AUTONOMOUS
-    private double botHeading = 0;
-    private double targetHeading;
+    public double headingOffset = Math.PI, headingVelocity = 0; //TODO GRAB FROM AUTONOMOUS
+    public double botHeading = 0, lastHeading = 0;
+    public double targetHeading = 0;
     private double brake = 1.0;
+    public static double P = 0.023, D = 0.03, F = 0, S = 0;
+    public static double P2 = 0.0085, D2 = 0.003, F2 = 0, S2 = 0;
+    public boolean lock = true, headingManuallyControlled = true;
+    PDFSController headingController = new PDFSController(P,D,F,S);
+    PDFSController secondaryheadingController = new PDFSController(P2,D2,F2,S2);
+    private final ElapsedTime headingTimer = new ElapsedTime();
     public FieldCentricV2() {}
 
     @Override
@@ -45,10 +58,16 @@ public class FieldCentricV2 implements Subsystem {
     }
     @Override
     public void read() {
+        headingController.setConstants(P, D, F, S);
+        secondaryheadingController.setConstants(P2, D2, F2, S2);
         botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + headingOffset;
+        headingVelocity = (lastHeading - botHeading) / headingTimer.seconds();
+        headingTimer.reset();
+        lastHeading = botHeading;
         x = robot.gamepad1.left_stick_x;
         y = -robot.gamepad1.left_stick_y;
         turn =  (robot.gamepad1.right_stick_x);
+        turn = SimpleMath.clamp(turn, -1, 1);
         if(robot.slides.getExtensionCm() > 35)
             brake = 0.37;
         else if (robot.gamepad1.right_trigger > 0)
@@ -100,7 +119,29 @@ public class FieldCentricV2 implements Subsystem {
         // Rotate the movement direction counter to the bot's rotation
         rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-        rotX = rotX * 1.1;
+
+        if (turn != 0) {
+            headingManuallyControlled = true;
+            //heading += K_STATIC*Math.signum(heading); //compensate for static friction for more precise control?
+        } else if (lock) {
+            if (Math.abs(headingVelocity) < Math.toRadians(20) && headingManuallyControlled) {
+                headingManuallyControlled = false;
+                targetHeading = botHeading;
+            }
+
+            double delta = Math.atan2(
+                    Math.sin(targetHeading - botHeading),
+                    Math.cos(targetHeading - botHeading)
+            );
+
+
+            if(!headingManuallyControlled && Math.abs(Math.toDegrees(-delta)) > 30)
+                turn = headingController.calculate(0, Math.toDegrees(-delta));
+            else if(!headingManuallyControlled){
+                turn = secondaryheadingController.calculate(0, Math.toDegrees(-delta));
+            }
+        }
+
     }
 }
 

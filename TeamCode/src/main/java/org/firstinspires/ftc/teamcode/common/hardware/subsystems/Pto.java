@@ -9,12 +9,11 @@ public class Pto implements Subsystem {
     RobotHardware robot = RobotHardware.getInstance();
     double state = 1 / 355.0 * 14.4, pozhang1 = 0.5, pozhang2 = 0.5;
 
-    public boolean hang()
+    public void hang()
     {
         pozhang1 = 1;
         pozhang2 = 1;
         state = 0.564 + 1 / 355.0 * 14.4;
-        return true;
     }
 
     @Override

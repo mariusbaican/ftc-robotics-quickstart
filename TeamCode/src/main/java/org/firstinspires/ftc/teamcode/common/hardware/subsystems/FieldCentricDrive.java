@@ -31,7 +31,7 @@ public class FieldCentricDrive implements Subsystem {
     public FieldCentricDrive() {}
 
     public FieldCentricDrive setHeadingPDFS(double kP, double kD, double kF, double kStatic) {
-        headingController = new PDFSController(kP, kD, kF, kStatic).setFeedForwardType(PDFSController.FeedForwardType.CONSTANT).setDeadzone(1).sethomedConstant(0);
+        headingController = new PDFSController(kP, kD, kF, kStatic);
         return this;
     }
 
@@ -40,7 +40,7 @@ public class FieldCentricDrive implements Subsystem {
     @Override
     public void read() {
         robot.pinpoint.update();
-        headingController.updateConstants(kP, kD, kF, kS);
+        headingController.setConstants(kP, kD, kF, kS);
         double imuHeading = robot.pinpoint.getHeading();
 
         currHeading = AngleUnit.normalizeRadians(imuHeading + headingOffset);

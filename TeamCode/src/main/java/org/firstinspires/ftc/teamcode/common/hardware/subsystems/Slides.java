@@ -19,8 +19,8 @@ public class Slides implements Subsystem{
     public static double Pv = 0.098, Dv = 0.012, Fv = 0.072, Sv = 0;
     boolean isretracted = true;
     public double angle = 0, targetpos = 0, currpos = 0, power = 0;
-    PDFSController PDFS = new PDFSController(Pv,Dv,Fv,Sv).setFeedForwardType(PDFSController.FeedForwardType.CONSTANT).setDeadzone(3).sethomedConstant(-0.1);
-    PDFSController PDFS2 = new PDFSController(Po,Do,Fo,So).setFeedForwardType(PDFSController.FeedForwardType.CONSTANT).setDeadzone(3).sethomedConstant(-0.1);
+    PDFSController PDFS = new PDFSController(Pv,Dv,Fv,Sv);
+    PDFSController PDFS2 = new PDFSController(Po,Do,Fo,So);
 
 
 
@@ -29,8 +29,8 @@ public class Slides implements Subsystem{
         robot.sliderr.setCurrentAlert(6, CurrentUnit.AMPS);
         currpos = getExtensionCm();
         angle = robot.pivot.getPivotAngle();
-        PDFS.updateConstants(Pv, Dv, Fv, Sv);
-        PDFS2.updateConstants(Po, Do, Fo, So);
+        PDFS.setConstants(Pv, Dv, Fv, Sv);
+        PDFS2.setConstants(Po, Do, Fo, So);
         if(targetpos != 0)
             isretracted = false;
     }
@@ -38,9 +38,9 @@ public class Slides implements Subsystem{
     @Override
     public void periodic() {
         if(robot.pivot.getPivotAngle() > 60)
-            power = PDFS.run(currpos, targetpos, angle);
+            power = PDFS.calculate(currpos, targetpos);
         else {
-            power = PDFS2.run(currpos, targetpos, angle);
+            power = PDFS2.calculate(currpos, targetpos);
         }
         if(targetpos == 0 && !isretracted)
             power = -1;

@@ -1,213 +1,108 @@
 package org.firstinspires.ftc.teamcode.common.controltheory;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.controltheory.Timer;
 
-import java.lang.Math;
-import java.sql.Time;
+public class PDFSController {
+    private double kP;
+    private double kD;
+    private double max_kF;
+    private double min_kF;
+    private double kStatic;
+    private double feedforwardMultiplier = 1;
+    private double minPosition = 0;
+    private double maxPosition = 100;
 
-public class PDFSController{
-    public enum FeedForwardType {
-        CONSTANT,
-        SIN,
-        COS
+    private double lastPosition;
+    private double errorThreshold = 1;
+    private double target;
+
+    private ElapsedTime timer;
+
+    public PDFSController(double kP, double kD, double min_kF, double max_kF, double kStatic) {
+        setConstants(kP, kD, min_kF, max_kF, kStatic);
+        timer = new ElapsedTime();
     }
 
-    public double kP, kD, kF, kL;
-
-    private double deadzone;
-
-    private double homedConstant;
-
-    private FeedForwardType feedForwardType;
-
-    private Timer timer = new Timer();
-
-    private RingBuffer<Double> timeBuffer = new RingBuffer<Double>(3, 0.0);
-    private RingBuffer<Double> errorBuffer = new RingBuffer<Double>(3, 0.0);
-
-    public PDFSController setFeedForwardType(FeedForwardType feedforwardType) {
-        this.feedForwardType = feedforwardType;
-        return this;
-    }
-    public PDFSController setDeadzone(double deadzone){
-        this.deadzone = deadzone;
-        return this;
+    public PDFSController(double kP, double kD, double min_kF, double kStatic) {
+        this(kP, kD, min_kF, min_kF, kStatic);
     }
 
-    public PDFSController sethomedConstant(double Constant){
-        this.homedConstant = Constant;
-        return this;
+    public PDFSController(PDFSConstants constants) {
+        this(constants.getkP(), constants.getkD(), constants.getmin_kF(), constants.getmax_kF(), constants.getkS());
     }
 
-
-    public PDFSController(double kP, double kD, double kF, double kL){
+    public PDFSController setConstants(double kP, double kD, double min_kF, double max_kF, double kStatic) {
         this.kP = kP;
         this.kD = kD;
-        this.kF = kF;
-        this.kL = kL;
+        this.min_kF = min_kF;
+        this.max_kF = max_kF;
+        this.kStatic = kStatic;
+        return this;
     }
 
-    public void updateConstants(double kP, double kD, double kF, double kL){
-        this.kP = kP;
-        this.kD = kD;
-        this.kF = kF;
-        this.kL = kL;
+    public void setErrorThreshold(double errorThreshold) {
+        this.errorThreshold = errorThreshold;
     }
 
-
-    public void reset(){
-        timeBuffer.fill(0.0);
-        errorBuffer.fill(0.0);
-        timer.resetTimer();
+    public PDFSController setConstants(double kP, double kD, double kF, double kStatic) {
+        setConstants(kP, kD, kF, kF, kStatic);
+        return this;
     }
 
+    public PDFSController setConstants(PDFSConstants constants) {
+        setConstants(constants.getkP(), constants.getkD(), constants.getmin_kF(), constants.getmax_kF(), constants.getkS());
+        return this;
+    }
 
-    public double run(double current, double target,  double currentangle){
+    public PDFSController setLimits(double minPosition, double maxPosition) {
+        this.minPosition = minPosition;
+        this.maxPosition = maxPosition;
+        return this;
+    }
 
-        double error = target - current;
+    public PDFSController setTarget(double target) {
+        this.target = target;
+        return this;
+    }
 
-        if (target == 0 && abs(error) < deadzone){
-            return homedConstant;
-        }
+    public double calculate(double currentPosition, double targetPosition) {
+        this.setTarget(targetPosition);
+        return calculate(currentPosition);
+    }
 
-        double time = timer.getElapsedTime();
+    // WARNING: Do not pass in the error as the current position as that can cause
+    //          issues with the dampening maths
+    public double calculate(double currentPosition) {
+        double error = target - currentPosition;
+        double currentVelocity = (lastPosition - currentPosition) / timer.seconds();
+        lastPosition = currentPosition;
 
-        double previous_time = timeBuffer.getValue(time);
-        double previous_error = errorBuffer.getValue(error);
+        double feedforwardPower = feedforwardMultiplier * ( min_kF + (max_kF - min_kF) * minPosition / (maxPosition - minPosition) );
+        double staticPower = (Math.abs(error) < errorThreshold) ? Math.signum(error) * kStatic : 0;
+        double output = kP * error - kD * currentVelocity + staticPower + feedforwardPower;
 
-        double delta_time = time - previous_time;
-        double delta_error = error - previous_error;
-
-        //If the PDFL hasn't been updated, reset it
-        if (delta_time > 200){
-            reset();
-            return run(current, target, currentangle);
-        }
-
-        double p = pComponent(error);
-        double d = dComponent(delta_error, delta_time);
-        double f = Math.sin(Math.toRadians(currentangle)) * fComponenet();
-        double l = lComponent(error);
-
-        double response = p + d + f + l;
-
-        if (abs(error) < deadzone){
-            //same response but without lower limit
-            response = p + d + f;
-        }
-
-        return Math.max(Math.abs(updatedPower(response,currentangle)),0) * Math.signum(error);
+        return output;
     }
 
 
-    public double runauto(double current, double target,  double currentangle){
+    /**
+     * @param multiplier value between -1 and 1
+     * Example: consider a pivoting arm, you would want the feedforward
+     * to scale sinusoidally with the arm's angle from the ground:
+     * for the pivot motor:
 
-        double error = target - current;
-
-        double time = timer.getElapsedTime();
-
-        double previous_time = timeBuffer.getValue(time);
-        double previous_error = errorBuffer.getValue(error);
-
-        double delta_time = time - previous_time;
-        double delta_error = error - previous_error;
-
-        //If the PDFL hasn't been updated, reset it
-        if (delta_time > 200){
-            reset();
-            return runauto(current, target, currentangle);
-        }
-
-        double p = pComponent(error);
-        double d = dComponent(delta_error, delta_time);
-        double f = Math.sin(Math.toRadians(currentangle)) * fComponenet();
-        double l = lComponent(error);
-
-        double response = p + d + f + l;
-
-        if (abs(error) < deadzone){
-            //same response but without lower limit
-            response = p + d + f;
-        }
-
-        return response;
+    update(){
+    //...
+    controller.setFeedforwardMultiplier(sin(angle));
+    power = controller.calculate(motor.getPosition());
+    //...
     }
 
-    public double runauto(double error,  double currentangle){
-        double time = timer.getElapsedTime();
+     */
 
-        double previous_time = timeBuffer.getValue(time);
-        double previous_error = errorBuffer.getValue(error);
-
-        double delta_time = time - previous_time;
-        double delta_error = error - previous_error;
-
-        //If the PDFL hasn't been updated, reset it
-        if (delta_time > 200){
-            reset();
-            return runauto(error, currentangle);
-        }
-
-        double p = pComponent(error);
-        double d = dComponent(delta_error, delta_time);
-        double f = Math.sin(Math.toRadians(currentangle)) * fComponenet();
-        double l = lComponent(error);
-
-        double response = p + d + f + l;
-
-        if (abs(error) < deadzone){
-            //same response but without lower limit
-            response = p + d + f;
-        }
-
-        return response;
-    }
-
-
-    private double pComponent(double error){
-
-        double response = kP * error;
-
-        return response;
-    }
-
-    private double dComponent(double delta_error, double delta_time){
-
-        double derivative = delta_error / delta_time;
-
-        double response = derivative * kD;
-
-        return response;
-    }
-
-    private double fComponenet(){
-
-        double response = kF;
-
-        return response;
-    }
-
-    private double lComponent(double error){
-
-        double direction = Math.signum(error);
-
-        double response = direction * kL;
-
-        return response;
-    }
-    private double updatedPower(double power,double currentAngle) {
-        switch (feedForwardType) {
-            case CONSTANT:
-                return power;
-            case SIN:
-                return power * Math.sin(Math.toRadians(currentAngle));
-            case COS:
-                return power * Math.cos(Math.toRadians(currentAngle));
-            default:
-                return 0.0;
-        }
+    private PDFSController setFeedforwardMultiplier(double multiplier){
+        feedforwardMultiplier = SimpleMath.clamp(multiplier, 0, 1);
+        return this;
     }
 }

@@ -18,60 +18,77 @@ public class Arm implements Subsystem
     private final double init_arm = 0.54, spec_arm = 0.26, intake_idle = 0.50, intake = 0.43, spec_in = 0.87;
     private double arm_pos = init_arm;
 
-    public boolean go_up()
+    public void go_up()
     {
         arm_pos -=0.003;
-        return true;
+
     }
 
-    public boolean score_spec_arm()
+    public void score_spec_arm()
     {
         arm_pos = 0.73;
-        return true;
+
     }
 
-    public boolean intake_retract()
+    public void intake_retract()
     {
         arm_pos = intake_idle + 0.05;
-        return true;
+
     }
 
 
 
-    public boolean spec_intake_arm()
+    public void spec_intake_arm()
     {
         arm_pos = 0.12;
-        return true;
+
     }
 
-    public boolean spec_intake()
+    public void spec_intake()
     {
         arm_pos = spec_in;
-        return true;
+
     }
 
-    public boolean reset()
+    public void reset()
     {
         arm_pos = init_arm;
-        return true;
+
     }
 
-    public boolean intake_idle()
+    public void intake_idle()
     {
         arm_pos = intake_idle;
-        return true;
+
     }
 
-    public boolean vert()
+    public void vert()
     {
         arm_pos = 0.8;
-        return true;
+
     }
 
-    public boolean intake()
+    public void wait_up()
+    {
+        arm_pos = 0.56;
+
+    }
+
+    public void get()
+    {
+        arm_pos = 0.475;
+
+    }
+    public  void drop()
+    {
+        arm_pos = 0.585;
+
+    }
+
+    public void intake()
     {
         arm_pos = intake;
-        return true;
+
     }
 
     public void setpos(double pos)
