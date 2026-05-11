@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.common.hardware.devicewrappers;
 
-import androidx.annotation.NonNull;
-
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+/**
+ * Unfinished
+ */
 public class BetterAbsoluteEncoder implements HardwareDevice
 {
 	private AnalogInput absoluteEncoder;

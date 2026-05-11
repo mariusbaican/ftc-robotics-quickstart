@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware;
+package org.firstinspires.ftc.common.examples.robot;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -8,14 +8,14 @@ import org.firstinspires.ftc.common.hardware.subsystems.SubsystemManager;
 import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 
-public class RobotState
+public class ExampleRobotState
 {
-    public static RobotState robotState = null;
+    public static final ExampleRobotState INSTANCE = new ExampleRobotState();
 
     public Gamepad gamepad1;
     public Gamepad gamepad2;
 
-    // Declare devices (motors, servos, encoders etc.)
+    // Declare hubs
     private LynxModule controlHub;
     private LynxModule expansionHub;
 
@@ -24,7 +24,12 @@ public class RobotState
 
     SubsystemManager subsystems = SubsystemManager.getInstance();
 
-    public RobotState init(HardwareMap hwMap)
+    public static ExampleRobotState getInstance()
+    {
+        return INSTANCE;
+    }
+
+    public ExampleRobotState init(HardwareMap hwMap)
     {
         subsystems.clear();
 
@@ -44,7 +49,7 @@ public class RobotState
         return this;
     }
 
-    public RobotState setGamepads(Gamepad gamepad1, Gamepad gamepad2)
+    public ExampleRobotState setGamepads(Gamepad gamepad1, Gamepad gamepad2)
     {
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
@@ -61,11 +66,4 @@ public class RobotState
         return voltageSupplier.get();
     }
 
-
-    public static RobotState getInstance()
-    {
-        if (robotState == null)
-            robotState = new RobotState();
-        return robotState;
-    }
 }

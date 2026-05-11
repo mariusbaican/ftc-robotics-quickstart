@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.common.opmode;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -55,7 +53,7 @@ public abstract class BrickOpMode extends LinearOpMode {
     public abstract void run();
 
     @Override
-    public void runOpMode() {
+    public final void runOpMode() {
         commandScheduler.reset();
         subsystemManager.clear();
         nodeManager.clear();
