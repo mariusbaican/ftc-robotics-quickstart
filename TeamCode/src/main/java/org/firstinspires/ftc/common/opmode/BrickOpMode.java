@@ -33,22 +33,22 @@ public abstract class BrickOpMode extends LinearOpMode {
     private double loopFrequency;
 
     /**
-     * This method is called once when the driver hits INIT
+     * This method is called once when the driver hits INIT.
      */
     public abstract void onInit();
 
     /**
-     * This method is called repeatedly after driver hits INIT, but before they hit START
+     * This method is called repeatedly after driver hits INIT, but before they hit START.
      */
     public abstract void initLoop();
 
     /**
-     * This method is called once when the driver hits START
+     * This method is called once when the driver hits START.
      */
     public abstract void onStart();
 
     /**
-     * This method is called repeatedly after driver hits START
+     * This method is called repeatedly after driver hits START.
      */
     public abstract void run();
 

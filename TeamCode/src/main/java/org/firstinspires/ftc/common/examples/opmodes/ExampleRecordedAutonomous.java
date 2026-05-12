@@ -3,16 +3,15 @@ package org.firstinspires.ftc.common.examples.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.common.manualautonomous.GamepadState;
+import org.firstinspires.ftc.common.manualautonomous.JsonReader;
 import org.firstinspires.ftc.common.opmode.BrickOpMode;
 import org.firstinspires.ftc.common.examples.robot.ExampleBindings;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.Objects;
 
 @Autonomous(name="ExampleRecordedAutonomous", group="Examples")
 public class ExampleRecordedAutonomous extends BrickOpMode {
-    private File file = null;
     private LinkedList<GamepadState> gamepadStates = null;
     private GamepadState currentState = null;
     private long startTimestamp = 0;
@@ -23,10 +22,7 @@ public class ExampleRecordedAutonomous extends BrickOpMode {
     @Override
     public void onInit() {
         // TODO: UPDATE THIS WITH YOUR OWN SAVE FILE NAME
-        file = new File("RedAutonomous.json");
-        gamepadStates = new LinkedList<>();
-
-        // TODO: ADD JSON READING LOGIC
+        gamepadStates = new JsonReader<GamepadState>().readFile("RedAutonomous.json", GamepadState.class);
     }
 
     @Override
@@ -36,6 +32,7 @@ public class ExampleRecordedAutonomous extends BrickOpMode {
 
     @Override
     public void onStart() {
+        // Saves the system time at the start of autonomous to align with the gamepad state timestamps
         startTimestamp = System.nanoTime();
         currentState = gamepadStates.pop();
     }
@@ -43,6 +40,7 @@ public class ExampleRecordedAutonomous extends BrickOpMode {
     @Override
     public void run() {
         long currentTimestamp = System.nanoTime() - startTimestamp;
+        // Removes all past gamepad states from the queue
         while (Objects.requireNonNull(gamepadStates.peek()).getTimestamp() < currentTimestamp) {
             currentState = gamepadStates.pop();
         }
