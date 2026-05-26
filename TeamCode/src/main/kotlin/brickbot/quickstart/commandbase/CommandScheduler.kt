@@ -8,8 +8,8 @@ object CommandScheduler {
      * This method clears both the commands and the declared conflicts.
      */
     fun reset() {
-        commands = mutableListOf()
-        conflictMap = mutableMapOf()
+        clearCommands()
+        clearConflicts()
     }
 
     /**

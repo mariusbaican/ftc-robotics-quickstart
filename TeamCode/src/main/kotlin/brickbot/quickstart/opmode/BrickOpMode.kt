@@ -38,10 +38,9 @@ abstract class BrickOpMode: LinearOpMode() {
 
     override fun runOpMode() {
         commandScheduler.reset()
-        subsystemManager.clear()
 
         // This calls the init methods automatically for all devices
-        deviceManager.initDevices()
+        deviceManager.initDevices(hardwareMap)
 
         onInit()
         while (!isStarted() && !isStopRequested()) {
@@ -64,5 +63,13 @@ abstract class BrickOpMode: LinearOpMode() {
 
             loopFrequency = ++loopCount / runtime.seconds()
         }
+
+        // This clears all the devices, unless the opMode throws an exception.
+        // I don't think there is a way to clear them in that scenario.
+        deviceManager.clear()
+
+        // This clears all the subsystems, unless the opMode throws an exception.
+        // I don't think there is a way to clear them in that scenario.
+        subsystemManager.clear()
     }
 }
