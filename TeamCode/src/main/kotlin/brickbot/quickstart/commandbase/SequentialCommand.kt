@@ -2,11 +2,12 @@ package brickbot.quickstart.commandbase
 
 import kotlin.collections.map
 
-class SequentialCommand(
+class SequentialCommand @JvmOverloads constructor(
     commandName: String = "",
     private val commands: MutableList<Command>
 ): Command(commandName) {
 
+    @JvmOverloads
     constructor(commandName: String = "", vararg commands: Command): this(commandName, commands.toMutableList())
 
     override fun run(): Boolean {

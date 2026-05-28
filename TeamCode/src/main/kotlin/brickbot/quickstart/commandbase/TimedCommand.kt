@@ -3,20 +3,21 @@ package brickbot.quickstart.commandbase
 import com.qualcomm.robotcore.util.ElapsedTime
 import java.util.function.BooleanSupplier
 
-class TimedCommand(
+class TimedCommand @JvmOverloads constructor(
     commandName: String = "",
-    private val timeoutMs: Long,
-    private val function: BooleanSupplier
+    private val function: BooleanSupplier,
+    private val timeoutMs: Long
 ): Command(commandName) {
     private lateinit var timer: ElapsedTime
 
-    constructor(commandName: String = "", timeoutMs: Long, function: Runnable): this(
+    @JvmOverloads
+    constructor(commandName: String = "", function: Runnable, timeoutMs: Long): this(
         commandName,
-        timeoutMs,
         BooleanSupplier {
             function.run()
             false
-        }
+        },
+        timeoutMs
     )
 
     override fun run(): Boolean {
@@ -29,6 +30,6 @@ class TimedCommand(
     }
 
     override fun clone(): Command {
-        return TimedCommand(commandName, timeoutMs, function)
+        return TimedCommand(commandName, function, timeoutMs)
     }
 }

@@ -2,7 +2,7 @@ package brickbot.quickstart.commandbase
 
 import com.qualcomm.robotcore.util.ElapsedTime
 
-class SleepCommand(
+class SleepCommand @JvmOverloads constructor(
     commandName: String = "",
     private val timeoutMs: Long
 ): Command(commandName) {

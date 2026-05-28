@@ -1,6 +1,6 @@
 package brickbot.quickstart.commandbase
 
-class InstantCommand(
+class InstantCommand @JvmOverloads constructor(
     commandName: String = "",
     private val unitFunction: Runnable
 ): Command(commandName) {

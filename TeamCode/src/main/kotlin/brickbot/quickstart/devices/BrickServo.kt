@@ -11,8 +11,8 @@ class BrickServo(deviceName: String): Servo, BrickDevice(deviceName) {
     private lateinit var servo: Servo
 
     private var initialized = false
-    var lastPosition = 0.0
-    var writeDelta = 0.0
+    private var lastPosition = 0.0
+    private var writeDelta = 0.0
 
     override fun init(hwMap: HardwareMap) {
         servo = hwMap.get(Servo::class.java, deviceName)

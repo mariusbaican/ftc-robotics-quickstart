@@ -3,10 +3,10 @@ package brickbot.quickstart.commandbase
 import com.qualcomm.robotcore.util.ElapsedTime
 import java.util.function.BooleanSupplier
 
-class WaitUntilCommand(
+class WaitUntilCommand @JvmOverloads constructor(
     commandName: String = "",
-    private var timeoutMs: Long = Long.MAX_VALUE,
-    private var condition: BooleanSupplier
+    private var condition: BooleanSupplier,
+    private var timeoutMs: Long = Long.MAX_VALUE
 ): Command(commandName) {
     private lateinit var timer: ElapsedTime
 
@@ -20,6 +20,6 @@ class WaitUntilCommand(
     }
 
     override fun clone(): Command {
-        return WaitUntilCommand(commandName, timeoutMs, condition)
+        return WaitUntilCommand(commandName, condition, timeoutMs)
     }
 }

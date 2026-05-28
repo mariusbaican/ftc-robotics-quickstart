@@ -1,6 +1,6 @@
 package brickbot.quickstart.commandbase
 
-abstract class Command(
+abstract class Command @JvmOverloads constructor(
     protected var commandName: String = ""
 ) : Cloneable {
     /**

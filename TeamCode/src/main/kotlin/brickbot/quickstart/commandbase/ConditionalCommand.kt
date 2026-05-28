@@ -2,7 +2,7 @@ package brickbot.quickstart.commandbase
 
 import java.util.function.BooleanSupplier
 
-class ConditionalCommand(
+class ConditionalCommand @JvmOverloads constructor(
     commandName: String = "",
     private val booleanFunction: BooleanSupplier
 ): Command(commandName) {
