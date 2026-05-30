@@ -3,17 +3,23 @@ package brickbot.quickstart.opmode
 import android.os.Environment
 import android.util.Base64
 import android.util.Log
+import brickbot.quickstart.follower.Localizer
 import brickbot.quickstart.commandbase.CommandScheduler
 import brickbot.quickstart.devices.DeviceManager
+import brickbot.quickstart.follower.PinpointLocalizer
+import brickbot.quickstart.follower.Pose
+import brickbot.quickstart.opmode.annotations.Playback
+import brickbot.quickstart.opmode.annotations.Recording
 import brickbot.quickstart.subsystems.Robot
 import brickbot.quickstart.recordautonomous.Bindings
 import brickbot.quickstart.recordautonomous.RecordingData
 import brickbot.quickstart.recordautonomous.RobotState
 import brickbot.quickstart.subsystems.SubsystemManager
+import brickbot.quickstart.updatable.UpdatableManager
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -23,22 +29,29 @@ import java.io.FileWriter
 import java.io.InputStreamReader
 
 abstract class BrickOpMode: LinearOpMode() {
+    // This is the infrastructure
     protected val commandScheduler = CommandScheduler
     protected val subsystemManager = SubsystemManager
+    protected val updatableManager = UpdatableManager
 
+    // This is the robot passed by the user to have its init and update methods called
     private lateinit var internalRobot: Robot
 
+    // This inits all the devices in the hardwareMap
     private val deviceManager = DeviceManager
-    private val runtime = ElapsedTime()
 
+    // This is used to determine the average loop times
+    private var opModeStartTimestamp = 0L
     private var loopCount = 0
     protected var loopFrequency: Double = 0.0
 
+    // This is used to record a TeleOp sequence and play it back as autonomous
     private lateinit var bindings: Bindings
     private lateinit var stateFilename: String
     private lateinit var lastSavedFile: String
     private lateinit var latestRecordingData: RecordingData
     private lateinit var readStates: MutableList<RobotState>
+    private lateinit var localizer: Localizer
 
     private var isRecording = false
 
@@ -49,6 +62,7 @@ abstract class BrickOpMode: LinearOpMode() {
     private var playbackAnnotation: brickbot.quickstart.opmode.annotations.Playback? = null
     private var bindingsAnnotation: brickbot.quickstart.opmode.annotations.Bindings? = null
     private var robotAnnotation: brickbot.quickstart.opmode.annotations.Robot? = null
+    private var localizerAnnotation: brickbot.quickstart.opmode.annotations.Localizer? = null
 
     /**
      * This method is called once when the driver hits INIT.
@@ -105,7 +119,7 @@ abstract class BrickOpMode: LinearOpMode() {
         }
         waitForStart()
 
-        runtime.reset()
+        opModeStartTimestamp = System.nanoTime()
         onStart()
 
         while (opModeIsActive() && !isStopRequested) {
@@ -125,12 +139,21 @@ abstract class BrickOpMode: LinearOpMode() {
                 }
 
                 if (isRecording) {
-                    latestRecordingData.addState(RobotState(System.nanoTime(), gamepad1.toByteArray(), gamepad2.toByteArray()))
+                    latestRecordingData.addState(
+                        RobotState(
+                            System.nanoTime(),
+                            gamepad1.toByteArray(),
+                            gamepad2.toByteArray(),
+                            localizer.getPosition()
+                        )
+                    )
                 }
 
                 if (System.nanoTime() - latestRecordingData.startTimestamp > 30e9) {
                     isRecording = false
                     onRecordingEnd()
+                    gamepad1.rumble(2000)
+                    gamepad2.rumble(2000)
                 }
 
                 if (::latestRecordingData.isInitialized && gamepad1.touchpadWasReleased()) {
@@ -148,7 +171,7 @@ abstract class BrickOpMode: LinearOpMode() {
 
             runInfrastructure()
 
-            loopFrequency = ++loopCount / runtime.seconds()
+            loopFrequency = ++loopCount / ((System.nanoTime() - opModeStartTimestamp) * 1e-9)
             telemetry.addData("Loop frequency:", "%ldHz", loopFrequency)
 
             if (isRecordingOpMode() && ::lastSavedFile.isInitialized) {
@@ -172,6 +195,7 @@ abstract class BrickOpMode: LinearOpMode() {
     private fun runInfrastructure() {
         commandScheduler.run()
         subsystemManager.run()
+        updatableManager.run()
     }
 
     private fun handleAnnotations() {
@@ -192,10 +216,14 @@ abstract class BrickOpMode: LinearOpMode() {
         robotAnnotation = this.javaClass.getAnnotation(
             brickbot.quickstart.opmode.annotations.Robot::class.java
         )
+        localizerAnnotation = this.javaClass.getAnnotation(
+            brickbot.quickstart.opmode.annotations.Localizer::class.java
+        )
 
         checkAnnotationsMakeSense()
 
         bindings = bindingsAnnotation!!.bindings.java.getDeclaredConstructor().newInstance()
+        localizer = localizerAnnotation!!.localizer.java.getDeclaredConstructor().newInstance()
 
         handleFilename()
     }
@@ -237,6 +265,9 @@ abstract class BrickOpMode: LinearOpMode() {
             if (isPlaybackOpMode()) {
                 throw RuntimeException("A TeleOp cannot be a Playback OpMode.")
             }
+            if (isRecordingOpMode() && !submittedLocalizer()) {
+                throw RuntimeException("Cannot record without submitting a localizer.")
+            }
         } else {
             throw RuntimeException("OpMode is neither declared as @Autonomous, nor @TeleOp.")
         }
@@ -275,9 +306,11 @@ abstract class BrickOpMode: LinearOpMode() {
                 val g1 = Base64.decode(obj.getString("gamepad1State"), Base64.NO_WRAP)
                 val g2 = Base64.decode(obj.getString("gamepad2State"), Base64.NO_WRAP)
 
-                // TODO: ADD POSE READING TOO
+                val x = obj.getDouble("x")
+                val y = obj.getDouble("y")
+                val heading = obj.getDouble("heading")
 
-                output.add(RobotState(timestamp, g1, g2))
+                output.add(RobotState(timestamp, g1, g2, Pose(x, y, heading)))
             }
         } catch (e: Exception) {
             Log.e("JsonReader", "Error reading file: " + e.message)
@@ -300,7 +333,9 @@ abstract class BrickOpMode: LinearOpMode() {
                 stateNode.put("gamepad1State", Base64.encodeToString(state.gamepad1State, Base64.NO_WRAP))
                 stateNode.put("gamepad2State", Base64.encodeToString(state.gamepad2State, Base64.NO_WRAP))
 
-                // TODO: ADD POSE WRITING
+                stateNode.put("x", state.pose.x)
+                stateNode.put("y", state.pose.y)
+                stateNode.put("heading", state.pose.heading)
 
                 robotStateArray.put(stateNode)
             }
@@ -353,5 +388,9 @@ abstract class BrickOpMode: LinearOpMode() {
 
     private fun submittedRobot(): Boolean {
         return robotAnnotation != null
+    }
+
+    private fun submittedLocalizer(): Boolean {
+        return localizerAnnotation != null
     }
 }

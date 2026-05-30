@@ -1,10 +1,10 @@
 package brickbot.quickstart.opmode.annotations
 
-import brickbot.quickstart.recordautonomous.Bindings
+import brickbot.quickstart.follower.Localizer
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-annotation class Bindings(
-    val bindings: KClass<out Bindings>
+annotation class Localizer(
+    val localizer: KClass<out Localizer>
 )

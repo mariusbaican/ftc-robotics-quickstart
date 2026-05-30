@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
 
 abstract class BrickDevice(private val deviceName: String): HardwareDevice {
+    init {
+        DeviceManager.addDevice(this)
+    }
+
     abstract fun init(hwMap: HardwareMap)
 
     /**
