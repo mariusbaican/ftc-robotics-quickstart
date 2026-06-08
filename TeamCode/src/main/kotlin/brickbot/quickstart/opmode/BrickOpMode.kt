@@ -6,10 +6,7 @@ import android.util.Log
 import brickbot.quickstart.follower.Localizer
 import brickbot.quickstart.commandbase.CommandScheduler
 import brickbot.quickstart.devices.DeviceManager
-import brickbot.quickstart.follower.PinpointLocalizer
 import brickbot.quickstart.follower.Pose
-import brickbot.quickstart.opmode.annotations.Playback
-import brickbot.quickstart.opmode.annotations.Recording
 import brickbot.quickstart.subsystems.Robot
 import brickbot.quickstart.recordautonomous.Bindings
 import brickbot.quickstart.recordautonomous.RecordingData
@@ -19,7 +16,6 @@ import brickbot.quickstart.updatable.UpdatableManager
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader

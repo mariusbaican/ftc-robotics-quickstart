@@ -1,12 +1,13 @@
 package brickbot.quickstart.pedropathing;
 
 import static com.pedropathing.math.MathFunctions.quadraticFit;
-import static brickbot.old.quickstart.pedropathing.Tuning.changes;
-import static brickbot.old.quickstart.pedropathing.Tuning.drawCurrent;
-import static brickbot.old.quickstart.pedropathing.Tuning.drawCurrentAndHistory;
-import static brickbot.old.quickstart.pedropathing.Tuning.follower;
-import static brickbot.old.quickstart.pedropathing.Tuning.stopRobot;
-import static brickbot.old.quickstart.pedropathing.Tuning.telemetryM;
+
+import static brickbot.quickstart.pedropathing.Tuning.changes;
+import static brickbot.quickstart.pedropathing.Tuning.drawCurrent;
+import static brickbot.quickstart.pedropathing.Tuning.drawCurrentAndHistory;
+import static brickbot.quickstart.pedropathing.Tuning.follower;
+import static brickbot.quickstart.pedropathing.Tuning.stopRobot;
+import static brickbot.quickstart.pedropathing.Tuning.telemetryM;
 
 import android.annotation.SuppressLint;
 
@@ -1368,7 +1369,7 @@ class Triangle extends OpMode {
 
 /**
  * This is the Circle autonomous OpMode. It runs the robot in a PathChain that's actually not quite
- * a circle, but some Bezier curves that have control points set essentially in a square. However,
+ * a circle, but some Bézier curves that have control points set essentially in a square. However,
  * it turns enough to tune your centripetal force correction and some of your heading. Some lag in
  * heading is to be expected.
  *
@@ -1439,6 +1440,7 @@ class AnalogMinMaxTuner extends OpMode {
     public List<LynxModule> lynxModules; //js to improve loop times a bit yk
 
     public void start() {
+
     }
 
     @Override
@@ -1675,7 +1677,7 @@ class Drawing {
 
     /**
      * This draws everything that will be used in the Follower's telemetryDebug() method. This takes
-     * a Follower as an input, so an instance of the DashbaordDrawingHandler class is not needed.
+     * a Follower as an input, so an instance of the DashboardDrawingHandler class is not needed.
      *
      * @param follower Pedro Follower instance.
      */

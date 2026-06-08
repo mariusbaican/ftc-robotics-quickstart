@@ -1,6 +1,5 @@
 package brickbot.quickstart.follower
 
-import brickbot.old.quickstart.controltheory.PDFSController
 import brickbot.quickstart.devices.BrickMotor
 import brickbot.quickstart.updatable.Updatable
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver
